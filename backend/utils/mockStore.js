@@ -1,0 +1,75 @@
+// In-Memory Data Store for DevSphere Technology Blog
+const categories = [{
+  _id: 'cat-1',
+  name: 'Software Development',
+  slug: 'software-development',
+  description: 'Practical tutorials, clean code patterns, system architecture, and software engineering.',
+  articleCount: 18
+}];
+
+const users = [
+  { _id: 'admin-dev-01', name: 'DevSphere Administrator', email: 'admin@devsphere.com', role: 'admin', accountStatus: 'active' },
+  { _id: 'user-1', name: 'David Miller', email: 'david@devsphere.com', role: 'user', accountStatus: 'active' },
+  { _id: 'user-2', name: 'Sarah Jenkins', email: 'sarah@devsphere.com', role: 'user', accountStatus: 'active' },
+  { _id: 'user-3', name: 'Alex Rivera', email: 'alex@devsphere.com', role: 'user', accountStatus: 'active' }
+];
+
+const createArt = (id, title, slug, desc, domain, status, author, daysAgo, img, views = 1200) => ({
+  _id: id,
+  title,
+  slug,
+  shortDescription: desc,
+  domain,
+  fullContent: `## ${title}\n\nDeep dive into ${domain.toLowerCase()} covering ${title.toLowerCase()}.\n\n### Core Engineering Insights\n- Robust architectural modularity and testability\n- Low-latency data flows and fault isolation\n- Production-tested best practices and observability.`,
+  featuredImage: img,
+  categoryId: categories[0],
+  authorId: author,
+  publishedDate: status === 'published' ? new Date(Date.now() - daysAgo * 86400000) : null,
+  readingTimeMinutes: 5,
+  viewsCount: views,
+  featuredStatus: id === 'art-1',
+  status,
+  createdAt: new Date(Date.now() - daysAgo * 86400000),
+  updatedAt: new Date(Date.now() - daysAgo * 86400000)
+});
+
+let articles = [
+  // 18 Published Articles: 3 each for Microservices, Clean Code, TypeScript, Docker, Testing, Database
+  createArt('art-1', 'Architecting Scalable Microservices with Node.js', 'architecting-scalable-microservices-with-nodejs', 'Proven architectural patterns for designing resilient, decoupled services with replica sets.', 'Microservices', 'published', users[1], 2, 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80', 1420),
+  createArt('art-2', 'Event-Driven Microservices Architecture with Apache Kafka', 'event-driven-microservices-architecture-with-apache-kafka', 'Designing decoupled asynchronous event streams with Kafka brokers, consumers, and idempotency.', 'Microservices', 'published', users[2], 3, 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1200&q=80', 1820),
+  createArt('art-3', 'API Gateway Patterns in Distributed Microservices Ecosystems', 'api-gateway-patterns-in-distributed-microservices-ecosystems', 'Centralizing authentication, rate limiting, and request routing across distributed backend services.', 'Microservices', 'published', users[3], 4, 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80', 2150),
+  createArt('art-4', 'Clean Code Principles Every Beginner Developer Should Know', 'clean-code-principles-every-beginner-developer-should-know', 'Write code that humans can understand: DRY, KISS, meaningful variable naming, and single-purpose functions.', 'Clean Code', 'published', users[2], 3, 'https://images.unsplash.com/photo-1516259762381-22954d7d3ad2?auto=format&fit=crop&w=1200&q=80', 2310),
+  createArt('art-5', 'Refactoring Legacy Codebases with Clean Code Practices', 'refactoring-legacy-codebases-with-clean-code-practices', 'Transform brittle legacy spaghetti code into maintainable, elegant modules with safe iterative refactoring.', 'Clean Code', 'published', users[1], 5, 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1200&q=80', 1670),
+  createArt('art-6', 'Mastering SOLID Design Principles for Clean Code Architecture', 'mastering-solid-design-principles-for-clean-code-architecture', 'A developer guide to Single Responsibility, Open-Closed, Liskov, Interface Segregation, and Dependency Inversion.', 'Clean Code', 'published', users[0], 6, 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1200&q=80', 2940),
+  createArt('art-7', 'Advanced TypeScript Generics and Conditional Types Explained', 'advanced-typescript-generics-and-conditional-types-explained', 'Harness type inference, mapped types, and conditional constraints to write type-safe flexible libraries.', 'TypeScript', 'published', users[3], 2, 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80', 1980),
+  createArt('art-8', 'Strict TypeScript Configuration Guide for Production Apps', 'strict-typescript-configuration-guide-for-production-apps', 'Optimizing tsconfig compiler flags with strictNullChecks, noImplicitAny, and isolatedModules for robust builds.', 'TypeScript', 'published', users[1], 4, 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80', 1450),
+  createArt('art-9', 'Design Patterns: Implementing the Observer Pattern in TypeScript', 'design-patterns-implementing-the-observer-pattern-in-typescript', 'A practical deep dive into behavioral design patterns with a complete type-safe EventEmitter implementation.', 'TypeScript', 'published', users[2], 5, 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80', 2200),
+  createArt('art-10', 'Mastering Docker Containers for Full-Stack Applications', 'mastering-docker-containers-for-full-stack-applications', 'Step-by-step guide to containerizing web backends and frontends with high-efficiency multi-stage builds.', 'Docker', 'published', users[2], 1, 'https://images.unsplash.com/photo-1605745341112-85968b19335b?auto=format&fit=crop&w=1200&q=80', 3120),
+  createArt('art-11', 'Optimizing Docker Image Size with Multi-Stage Alpine Builds', 'optimizing-docker-image-size-with-multi-stage-alpine-builds', 'Shrink container images from 1GB to under 80MB using distroless images, caching layers, and minimal baselines.', 'Docker', 'published', users[3], 3, 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1200&q=80', 1780),
+  createArt('art-12', 'Docker Compose for Multi-Container Local Development Environments', 'docker-compose-for-multi-container-local-development-environments', 'Orchestrate interconnected backend services, caches, and persistent volumes in isolated dev networks.', 'Docker', 'published', users[0], 5, 'https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?auto=format&fit=crop&w=1200&q=80', 2650),
+  createArt('art-13', 'Test-Driven Development (TDD) with Modern Testing Frameworks', 'test-driven-development-tdd-with-modern-testing-frameworks', 'Write robust test suites first to produce bulletproof component logic and eliminate regression bugs.', 'Testing', 'published', users[0], 2, 'https://images.unsplash.com/photo-1504639725590-34d0984388bd?auto=format&fit=crop&w=1200&q=80', 1890),
+  createArt('art-14', 'End-to-End Automation Testing Strategies with Playwright', 'end-to-end-automation-testing-strategies-with-playwright', 'Automate realistic cross-browser user flows, flaky test handling, and visual regression testing in CI.', 'Testing', 'published', users[2], 4, 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80', 2100),
+  createArt('art-15', 'Integration Testing Best Practices for REST and GraphQL APIs', 'integration-testing-best-practices-for-rest-and-graphql-apis', 'Mock external dependencies, assert HTTP contracts, and validate server state with automated integration suites.', 'Testing', 'published', users[1], 6, 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80', 1640),
+  createArt('art-16', 'Demystifying SQL vs NoSQL: Choosing the Right Database for Your App', 'demystifying-sql-vs-nosql-choosing-the-right-database-for-your-app', 'Comprehensive comparison between relational schemas and document stores with real-world workloads.', 'Database', 'published', users[1], 3, 'https://images.unsplash.com/photo-1544383835-bda2bc66a55d?auto=format&fit=crop&w=1200&q=80', 2780),
+  createArt('art-17', 'Database Indexing Strategies for High-Performance Queries', 'database-indexing-strategies-for-high-performance-queries', 'Understand B-Tree indexes, compound indexes, explain plans, and query bottlenecks to accelerate lookups.', 'Database', 'published', users[3], 5, 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=1200&q=80', 1950),
+  createArt('art-18', 'Managing Database Migrations and ACID Transactions in Production', 'managing-database-migrations-and-acid-transactions-in-production', 'Execute zero-downtime schema migrations, manage distributed transactions, and prevent deadlocks.', 'Database', 'published', users[2], 7, 'https://images.unsplash.com/photo-1542831371-29b0f74f9713?auto=format&fit=crop&w=1200&q=80', 2410),
+
+  // 5 Pending Review Articles
+  createArt('art-p-1', 'Deep Dive into Linux Kernel System Calls for Web Developers', 'deep-dive-into-linux-kernel-system-calls-for-web-developers', 'Understanding epoll, file descriptors, and non-blocking IO.', 'Architecture', 'pending', users[1], 1, 'https://images.unsplash.com/photo-1629654297299-c8506221ca97?auto=format&fit=crop&w=1200&q=80', 0),
+  createArt('art-p-2', 'Web Security Hardening: Securing Microservices from XSS and CSRF', 'web-security-hardening-securing-microservices-from-xss-and-csrf', 'Essential defense-in-depth security strategies for modern APIs.', 'Security', 'pending', users[2], 1, 'https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=1200&q=80', 0),
+  createArt('art-p-3', 'Git and GitHub Workflow: A Step-by-Step Production Guide', 'git-and-github-workflow-step-by-step-production-guide', 'Master version control branching strategies and pull requests.', 'DevOps', 'pending', users[3], 2, 'https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?auto=format&fit=crop&w=1200&q=80', 0),
+  createArt('art-p-4', 'Building High-Throughput Caching with Redis In-Memory Store', 'building-high-throughput-caching-with-redis-in-memory-store', 'Scalable memory store caching patterns with TTL and eviction policies.', 'Architecture', 'pending', users[0], 2, 'https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=1200&q=80', 0),
+  createArt('art-p-5', 'GraphQL Schema Federation: Composing Distributed Subgraphs', 'graphql-schema-federation-composing-distributed-subgraphs', 'Unifying multiple backend domains into a single high-performance schema.', 'Architecture', 'pending', users[1], 3, 'https://images.unsplash.com/photo-1508739773434-c26b3d09e071?auto=format&fit=crop&w=1200&q=80', 0),
+
+  // 3 Draft Articles
+  createArt('art-d-1', 'Distributed Tracing and Observability with OpenTelemetry', 'distributed-tracing-and-observability-with-opentelemetry', 'Correlating distributed requests across container boundaries.', 'DevOps', 'draft', users[1], 5, 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1200&q=80', 0),
+  createArt('art-d-2', 'Optimizing React 19 Compiler Performance in High-Frequency UIs', 'optimizing-react-19-compiler-performance-in-high-frequency-uis', 'Exploiting the new React Compiler memoization pipeline for 60fps UIs.', 'Frontend', 'draft', users[2], 6, 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&w=1200&q=80', 0),
+  createArt('art-d-3', 'Zero-Trust Network Access for Engineering Infrastructure', 'zero-trust-network-access-for-engineering-infrastructure', 'Eliminating perimeter security models with identity-aware proxies.', 'Security', 'draft', users[3], 7, 'https://images.unsplash.com/photo-1510511459019-5dda7724fd87?auto=format&fit=crop&w=1200&q=80', 0)
+];
+
+let activities = [
+  { _id: 'act-1', userId: users[0], action: 'ADMIN_AUTHENTICATED', entityType: 'system', details: { message: 'Administrator logged into the management portal' }, createdAt: new Date() },
+  { _id: 'act-2', userId: users[1], action: 'ARTICLE_SUBMITTED', entityType: 'article', details: { title: 'Design Patterns: Implementing the Observer Pattern in TypeScript' }, createdAt: new Date() }
+];
+
+module.exports = { categories, users, articles, activities };
