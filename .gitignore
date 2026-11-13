@@ -2,6 +2,10 @@
 node_modules/
 */node_modules/
 
+# Lockfiles (prevent corrupt/truncated lockfiles on CI/CD)
+package-lock.json
+*/package-lock.json
+
 # Production builds
 dist/
 dist-ssr/
