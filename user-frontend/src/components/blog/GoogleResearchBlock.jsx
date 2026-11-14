@@ -43,11 +43,11 @@ const GoogleResearchBlock = ({ article }) => {
             href={link.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn btn-outline-dark p-2 text-start d-flex align-items-center justify-content-between rounded-1"
-            style={{ fontSize: '0.85rem', transition: 'all 0.15s ease' }}
+            className="research-link-item hover-popup"
+            style={{ fontSize: '0.85rem' }}
           >
             <div className="d-flex align-items-center gap-2">
-              <i className={`bi ${link.icon} fs-6`}></i>
+              <i className={`bi ${link.icon} fs-6 text-dark`}></i>
               <div>
                 <span className="fw-bold d-block text-dark">{link.title}</span>
                 <small className="text-muted d-block" style={{ fontSize: '0.75rem' }}>{link.desc}</small>

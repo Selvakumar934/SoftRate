@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const {
   getDashboard, getAdminArticles, getPendingArticles, approveArticle, rejectArticle,
-  toggleFeaturedStatus, deleteArticleAdmin, getUsers, updateUser, toggleUserStatus, toggleUserRole, getActivities
+  toggleFeaturedStatus, deleteArticleAdmin, getUsers, createUser, updateUser, deleteUser,
+  toggleUserStatus, toggleUserRole, getActivities
 } = require('../controllers/adminController.js');
 
 const authenticateToken = require('../middleware/authMiddleware.js');
@@ -19,7 +20,9 @@ router.put('/articles/:id/featured', toggleFeaturedStatus);
 router.delete('/articles/:id', deleteArticleAdmin);
 
 router.get('/users', getUsers);
+router.post('/users', createUser);
 router.put('/users/:id', updateUser);
+router.delete('/users/:id', deleteUser);
 router.put('/users/:id/status', toggleUserStatus);
 router.put('/users/:id/role', toggleUserRole);
 router.get('/activities', getActivities);

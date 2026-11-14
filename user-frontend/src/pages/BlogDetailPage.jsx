@@ -62,10 +62,10 @@ const BlogDetailPage = () => {
           <div className="row g-3">
             {related.map((item) => (
               <div key={item._id || item.slug} className="col-md-4">
-                <div className="p-3 border border-dark rounded-2 h-100 bg-white">
-                  <Link to={`/blogs/${item.slug}`} className="fw-bold text-dark text-decoration-none small d-block mb-1">{item.title}</Link>
+                <Link to={`/blogs/${item.slug}`} className="d-block p-3 border border-dark rounded-2 h-100 bg-white text-decoration-none hover-popup">
+                  <div className="fw-bold text-dark small mb-1">{item.title}</div>
                   <span className="text-muted small">{item.readingTimeMinutes || 4} min read</span>
-                </div>
+                </Link>
               </div>
             ))}
           </div>

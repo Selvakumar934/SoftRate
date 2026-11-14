@@ -211,3 +211,17 @@ body {
   border-color: #000000 !important;
   box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.12) !important;
 }
+
+
+/* Smooth Hover Popup Animation & Card Lift */
+.hover-popup {
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, background-color 0.2s ease !important;
+  cursor: pointer;
+}
+
+.hover-popup:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08) !important;
+  border-color: #000000 !important;
+  background-color: #fafafa !important;
+}

@@ -317,3 +317,46 @@ a:hover {
 .table tbody tr:hover {
   background-color: #fafafa !important;
 }
+
+
+/* Smooth Hover Popup Animation & Card Lift */
+.hover-popup {
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, background-color 0.2s ease !important;
+  cursor: pointer;
+}
+
+.hover-popup:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08) !important;
+  border-color: #000000 !important;
+  background-color: #fafafa !important;
+}
+
+/* Research link item - avoids harsh black background on hover */
+.research-link-item {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-decoration: none !important;
+  color: #000000 !important;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background-color 0.18s ease;
+}
+
+.research-link-item:hover {
+  background-color: #fdfdfd !important;
+  border-color: #000000 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
+  color: #000000 !important;
+  text-decoration: none !important;
+}
+
+.research-link-item:hover .text-dark,
+.research-link-item:hover span,
+.research-link-item:hover i {
+  color: #000000 !important;
+}
