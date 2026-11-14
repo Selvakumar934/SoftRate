@@ -35,6 +35,10 @@ const AdminSidebar = ({ pendingCount = 5 }) => {
           <span>All Articles</span>
         </NavLink>
 
+        <NavLink to="/reviews" className="admin-nav-item">
+          <span>Review</span>
+        </NavLink>
+
         <NavLink to="/articles/create" className="admin-nav-item">
           <span>Publish Article</span>
         </NavLink>

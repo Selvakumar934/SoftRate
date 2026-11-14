@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const User = require('../models/User.js');
 const Category = require('../models/Category.js');
 const Article = require('../models/Article.js');
+const Review = require('../models/Review.js');
 const mockStore = require('./mockStore.js');
 
 const seed = async () => {
@@ -50,7 +51,16 @@ const seed = async () => {
       );
     }
 
-    console.log(`[Seed] Database successfully populated with ${mockStore.articles.length} articles & real-time authors!`);
+    for (const r of mockStore.reviews || []) {
+      const { _id, ...rest } = r;
+      await Review.findOneAndUpdate(
+        { articleSlug: r.articleSlug, userName: r.userName },
+        { ...rest, articleId: r.articleSlug },
+        { upsert: true, returnDocument: 'after' }
+      );
+    }
+
+    console.log(`[Seed] Populated ${mockStore.articles.length} articles, authors, & reviews!`);
     process.exit(0);
   } catch (err) {
     console.error('[Seed Error]:', err.message);

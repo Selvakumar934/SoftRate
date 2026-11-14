@@ -1,0 +1,88 @@
+import React, { useState, useEffect } from 'react';
+import adminApi from '../services/adminApi.js';
+import { SAMPLE_REVIEWS } from '../services/sampleReviews.js';
+
+const AdminReviewsPage = () => {
+  const [reviews, setReviews] = useState(SAMPLE_REVIEWS), [filter, setFilter] = useState('all'), [search, setSearch] = useState('');
+
+  const loadReviews = async () => {
+    try {
+      const res = await adminApi.get('/reviews');
+      if (res.data?.data?.length) setReviews(res.data.data);
+    } catch (e) {}
+  };
+
+  useEffect(() => { loadReviews(); }, []);
+
+  const handleDelete = async (id, title) => {
+    if (!window.confirm(`Permanently remove review for "${title}"?`)) return;
+    try { await adminApi.delete(`/reviews/${id}`); } catch (e) {}
+    setReviews((p) => p.filter((r) => r._id !== id));
+  };
+
+  const filtered = reviews.filter((r) => {
+    const matchRating = filter === 'all' || String(r.rating) === filter;
+    const matchSearch = !search || (r.articleTitle || '').toLowerCase().includes(search.toLowerCase()) || (r.userName || '').toLowerCase().includes(search.toLowerCase());
+    return matchRating && matchSearch;
+  });
+
+  return (
+    <div className="container-fluid py-4">
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 className="fw-bold text-dark mb-1">Article Reviews & Feedback</h2>
+          <p className="text-muted small mb-0">Moderation of reader reviews and technical queries across all articles.</p>
+        </div>
+      </div>
+
+      <div className="card border-dark rounded-2 bg-white">
+        <div className="p-3 border-bottom border-dark d-flex flex-wrap justify-content-between align-items-center gap-2">
+          <div className="fw-bold small">Total Reviews: {reviews.length}</div>
+          <div className="d-flex gap-2">
+            <input className="form-control form-control-sm border-dark" style={{ width: '200px' }} placeholder="Search article/user..." value={search} onChange={(e) => setSearch(e.target.value)} />
+            <div className="btn-group btn-group-sm">
+              {['all', '5', '4', '3', '2', '1'].map((v) => (
+                <button key={v} onClick={() => setFilter(v)} className={`btn ${filter === v ? 'btn-dark' : 'btn-outline-dark'}`}>{v === 'all' ? 'All' : `${v}★`}</button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="table-responsive">
+          <table className="table table-hover align-middle mb-0 small">
+            <thead className="table-light">
+              <tr>
+                <th className="ps-3 py-2">Article Name</th>
+                <th>Reviewer</th>
+                <th>Rating</th>
+                <th style={{ minWidth: '260px' }}>Review / Query Content</th>
+                <th>Date</th>
+                <th className="text-end pe-3">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((r) => (
+                <tr key={r._id || r.createdAt}>
+                  <td className="ps-3 py-2">
+                    <div className="fw-bold text-dark text-truncate" style={{ maxWidth: '240px' }}>{r.articleTitle || r.articleSlug}</div>
+                    <small className="text-muted">{r.articleSlug}</small>
+                  </td>
+                  <td>
+                    <div className="fw-semibold text-dark">{r.userName}</div>
+                    {r.userEmail && <small className="text-muted">{r.userEmail}</small>}
+                  </td>
+                  <td><span className="badge bg-dark text-white">{'★'.repeat(r.rating || 5)}{'☆'.repeat(5 - (r.rating || 5))} {r.rating}/5</span></td>
+                  <td className="text-dark py-2"><p className="mb-0 text-truncate" style={{ maxWidth: '340px' }} title={r.comment}>{r.comment}</p></td>
+                  <td className="text-muted" style={{ whiteSpace: 'nowrap' }}>{new Date(r.createdAt || Date.now()).toLocaleDateString()}</td>
+                  <td className="text-end pe-3 py-2"><button onClick={() => handleDelete(r._id, r.articleTitle)} className="btn btn-outline-dark btn-sm">Delete</button></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AdminReviewsPage;

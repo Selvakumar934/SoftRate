@@ -10,6 +10,7 @@ import AdminDashboardPage from './pages/AdminDashboardPage.jsx';
 import AdminApprovalPage from './pages/AdminApprovalPage.jsx';
 import AdminArticlesPage from './pages/AdminArticlesPage.jsx';
 import AdminArticleEditorPage from './pages/AdminArticleEditorPage.jsx';
+import AdminReviewsPage from './pages/AdminReviewsPage.jsx';
 
 const AdminLayout = ({ children }) => (
   <div className="admin-wrapper">
@@ -46,6 +47,10 @@ function App() {
           <Route
             path="/articles/edit/:id"
             element={<ProtectedAdminRoute><AdminLayout><AdminArticleEditorPage /></AdminLayout></ProtectedAdminRoute>}
+          />
+          <Route
+            path="/reviews"
+            element={<ProtectedAdminRoute><AdminLayout><AdminReviewsPage /></AdminLayout></ProtectedAdminRoute>}
           />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>

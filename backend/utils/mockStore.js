@@ -77,4 +77,13 @@ let activities = [
   { _id: 'act-2', userId: users[1], action: 'ARTICLE_SUBMITTED', entityType: 'article', details: { title: 'Architecting Multi-Tenant Microservices' }, createdAt: new Date() }
 ];
 
-module.exports = { categories, users, articles, activities };
+let reviews = [
+  { _id: 'rev-1', articleSlug: 'architecting-scalable-microservices-with-nodejs', articleTitle: 'Architecting Scalable Microservices with Node.js', userName: 'Rajesh Kumar', rating: 5, comment: 'Outstanding architecture breakdown! The diagrams and Kafka idempotency patterns clarified key concepts.', createdAt: new Date(Date.now() - 86400000 * 2) },
+  { _id: 'rev-2', articleSlug: 'event-driven-microservices-architecture-with-apache-kafka', articleTitle: 'Event-Driven Microservices Architecture with Apache Kafka', userName: 'Priya Nair', rating: 4, comment: 'Very insightful guide! Query: how does Kafka handle partition rebalancing during heavy consumer spikes?', createdAt: new Date(Date.now() - 86400000 * 3) },
+  { _id: 'rev-3', articleSlug: 'clean-code-principles-every-beginner-developer-should-know', articleTitle: 'Clean Code Principles Every Beginner Developer Should Know', userName: 'Amit Sharma', rating: 5, comment: 'Super clear guide on clean code. Follow-up query: how do you balance DRY with domain duplication across microservice boundaries?', createdAt: new Date(Date.now() - 86400000 * 4) },
+  { _id: 'rev-4', articleSlug: 'advanced-typescript-generics-and-conditional-types-explained', articleTitle: 'Advanced TypeScript Generics and Conditional Types Explained', userName: 'Sunita Reddy', rating: 5, comment: 'Best explanation of TypeScript conditional types and infer keyword I have seen. Solved my compiler error.', createdAt: new Date(Date.now() - 86400000 * 2) },
+  { _id: 'rev-5', articleSlug: 'mastering-docker-containers-for-full-stack-applications', articleTitle: 'Mastering Docker Containers for Full-Stack Applications', userName: 'Deepak Verma', rating: 3, comment: 'Good tutorial. Query: could you add a section comparing Alpine vs distroless base image vulnerability footprints?', createdAt: new Date(Date.now() - 86400000 * 5) },
+  { _id: 'rev-6', articleSlug: 'demystifying-sql-vs-nosql-choosing-the-right-database-for-your-app', articleTitle: 'Demystifying SQL vs NoSQL: Choosing the Right Database for Your App', userName: 'Rohan Mehta', rating: 5, comment: 'Loved the SQL vs NoSQL comparison. The breakdown of ACID guarantees vs eventual consistency is spot on.', createdAt: new Date(Date.now() - 86400000 * 1) }
+];
+
+module.exports = { categories, users, articles, activities, reviews };

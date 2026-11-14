@@ -5,6 +5,7 @@ import remarkGfm from 'remark-gfm';
 import api from '../services/api.js';
 import { SAMPLE_ARTICLES } from '../services/sampleData.js';
 import GoogleResearchBlock from '../components/blog/GoogleResearchBlock.jsx';
+import ArticleReviewsBlock from '../components/blog/ArticleReviewsBlock.jsx';
 
 const BlogDetailPage = () => {
   const { slug } = useParams();
@@ -55,6 +56,7 @@ const BlogDetailPage = () => {
       <div className="article-body mb-4"><ReactMarkdown remarkPlugins={[remarkGfm]}>{article.fullContent}</ReactMarkdown></div>
 
       <GoogleResearchBlock article={article} />
+      <ArticleReviewsBlock article={article} />
 
       {related.length > 0 && (
         <div className="pt-4 border-top border-light-subtle">

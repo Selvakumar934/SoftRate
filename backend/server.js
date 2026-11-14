@@ -11,6 +11,7 @@ const authRoutes = require('./routes/authRoutes.js');
 const categoryRoutes = require('./routes/categoryRoutes.js');
 const articleRoutes = require('./routes/articleRoutes.js');
 const adminRoutes = require('./routes/adminRoutes.js');
+const reviewRoutes = require('./routes/reviewRoutes.js');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -61,6 +62,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/articles', articleRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 app.use((req, res) => {
   res.status(404).json({
