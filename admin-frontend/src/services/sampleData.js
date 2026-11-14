@@ -1,9 +1,9 @@
 export const FALLBACK_METRICS = {
-  totalArticles: 26,
+  totalArticles: 34,
   publishedArticles: 18,
-  pendingArticles: 5,
-  draftArticles: 3,
-  totalViews: 38260
+  pendingArticles: 9,
+  draftArticles: 7,
+  totalViews: 42100
 };
 
 const mk = (id, title, desc, domain, status, author, daysAgo, img, views = 1200) => ({
@@ -29,5 +29,7 @@ export const FALLBACK_ADMIN_ARTICLES = [
   mk('art-p-1', 'Deep Dive into Linux Kernel System Calls for Web Developers', 'Understanding epoll, file descriptors, and non-blocking IO.', 'Architecture', 'pending', 'David Miller', 1, 'https://images.unsplash.com/photo-1629654297299-c8506221ca97?auto=format&fit=crop&w=1200&q=80', 0),
   mk('art-p-2', 'Web Security Hardening: Securing Microservices from XSS and CSRF', 'Essential defense-in-depth security strategies for modern APIs.', 'Security', 'pending', 'Sarah Jenkins', 1, 'https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=1200&q=80', 0),
   mk('art-p-3', 'Git and GitHub Workflow: A Step-by-Step Production Guide', 'Master version control branching strategies and pull requests.', 'DevOps', 'pending', 'Alex Rivera', 2, 'https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?auto=format&fit=crop&w=1200&q=80', 0),
-  mk('art-d-1', 'Distributed Tracing and Observability with OpenTelemetry', 'Correlating distributed requests across container boundaries.', 'DevOps', 'draft', 'David Miller', 5, 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1200&q=80', 0)
+  mk('art-p-6', 'Kubernetes Custom Resource Definitions (CRDs) and Operator Pattern', 'Build declarative Kubernetes extensions in Go.', 'DevOps', 'pending', 'David Miller', 1, 'https://images.unsplash.com/photo-1667372393119-3d4c48d07fc9?auto=format&fit=crop&w=1200&q=80', 0),
+  mk('art-d-1', 'Distributed Tracing and Observability with OpenTelemetry', 'Correlating distributed requests across container boundaries.', 'DevOps', 'draft', 'David Miller', 5, 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1200&q=80', 0),
+  mk('art-d-4', 'WebAssembly (WASM) in Production: Blazing Fast Client-Side Compute', 'Compiling C++/Rust to WebAssembly in-browser.', 'Frontend', 'draft', 'David Miller', 4, 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80', 0)
 ];

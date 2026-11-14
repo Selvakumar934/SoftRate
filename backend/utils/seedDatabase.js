@@ -54,11 +54,11 @@ const seed = async () => {
           readingTimeMinutes: a.readingTimeMinutes || 5,
           viewsCount: a.viewsCount || 1000
         },
-        { upsert: true, new: true }
+        { upsert: true, returnDocument: 'after' }
       );
     }
 
-    console.log('[Seed] Database successfully populated with 18 articles across 6 domains!');
+    console.log(`[Seed] Database successfully populated with ${mockStore.articles.length} articles!`);
     process.exit(0);
   } catch (err) {
     console.error('[Seed Error]:', err.message);
