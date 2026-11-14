@@ -7,9 +7,6 @@ const AboutPage = () => {
       <div className="row justify-content-center">
         <div className="col-lg-8">
           <div className="text-center mb-5">
-            <span className="badge bg-dark text-white px-3 py-1 rounded-1 text-uppercase mb-2" style={{ fontSize: '0.75rem' }}>
-              About
-            </span>
             <h1 className="fw-bold text-dark mb-2">
               About DevSphere
             </h1>
