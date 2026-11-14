@@ -15,6 +15,8 @@ import LoginPage from './pages/LoginPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
 import UserDashboardPage from './pages/UserDashboardPage.jsx';
 import ArticleEditorPage from './pages/ArticleEditorPage.jsx';
+import AdminPortalPage from './pages/AdminPortalPage.jsx';
+import AdminLoginPage from './pages/AdminLoginPage.jsx';
 
 const NotFoundPage = () => (
   <div className="container py-5 my-auto text-center">
@@ -67,6 +69,9 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
+
+                <Route path="/admin" element={<AdminPortalPage />} />
+                <Route path="/admin/login" element={<AdminLoginPage />} />
 
                 <Route path="*" element={<NotFoundPage />} />
               </Routes>

@@ -1,12 +1,5 @@
 // In-Memory Data Store for DevSphere Technology Blog
-const categories = [{
-  _id: 'cat-1',
-  name: 'Software Development',
-  slug: 'software-development',
-  description: 'Practical tutorials, clean code patterns, system architecture, and software engineering.',
-  articleCount: 18
-}];
-
+const categories = [{ _id: 'cat-1', name: 'Software Development', slug: 'software-development', description: 'Practical tutorials and architecture guides.', articleCount: 18 }];
 const users = [
   { _id: 'admin-dev-01', name: 'DevSphere Administrator', email: 'admin@devsphere.com', role: 'admin', accountStatus: 'active' },
   { _id: 'user-1', name: 'David Miller', email: 'david@devsphere.com', role: 'user', accountStatus: 'active' },
@@ -14,23 +7,45 @@ const users = [
   { _id: 'user-3', name: 'Alex Rivera', email: 'alex@devsphere.com', role: 'user', accountStatus: 'active' }
 ];
 
+const buildContent = (title, domain, desc) => `## ${title}
+${desc}
+
+### 1. Architectural Foundations of ${domain}
+In modern software engineering, adopting rigorous **${domain.toLowerCase()}** patterns is essential for building scalable, fault-tolerant, and maintainable systems. Decoupling high-throughput pipelines from underlying storage models ensures that independent services can scale horizontally without causing cascading failures.
+
+### 2. Production Code Implementation
+\`\`\`javascript
+// Production-ready resilient service pattern for ${domain}
+export async function executeOperation(payload, options = {}) {
+  const timeoutMs = options.timeoutMs || 4000;
+  const correlationId = options.traceId || crypto.randomUUID();
+  try {
+    const outcome = await Promise.race([processDomainWorkflow(payload), new Promise((_, reject) => setTimeout(() => reject(new Error('Operation timeout')), timeoutMs))]);
+    return { success: true, correlationId, data: outcome, timestamp: new Date().toISOString() };
+  } catch (error) {
+    console.error(\`[\${correlationId}] Execution failed: \${error.message}\`);
+    throw error;
+  }
+}
+\`\`\`
+
+### 3. Engineering Best Practices & Trade-Offs
+- **Zero-Downtime Resilience**: Deploy with automated health probes and circuit breakers.
+- **Contract Enforcement**: Enforce strict schema boundaries using TypeScript or Protobuf specifications.
+- **Telemetry & Tracing**: Propagate distributed trace IDs across all asynchronous event hops.
+
+### 4. Verified Google Research & Documentation Links
+- [Google Search: ${title} Tutorial & Architecture](https://www.google.com/search?q=${encodeURIComponent(title + ' production architecture')})
+- [Google Search: ${domain} Best Practices 2026](https://www.google.com/search?q=${encodeURIComponent(domain + ' software engineering best practices 2026')})
+- [Google Developers Documentation Portal](https://developers.google.com/)
+- [Google Cloud Architecture Framework](https://cloud.google.com/architecture/framework)`;
+
 const createArt = (id, title, slug, desc, domain, status, author, daysAgo, img, views = 1200) => ({
-  _id: id,
-  title,
-  slug,
-  shortDescription: desc,
-  domain,
-  fullContent: `## ${title}\n\nDeep dive into ${domain.toLowerCase()} covering ${title.toLowerCase()}.\n\n### Core Engineering Insights\n- Robust architectural modularity and testability\n- Low-latency data flows and fault isolation\n- Production-tested best practices and observability.`,
-  featuredImage: img,
-  categoryId: categories[0],
-  authorId: author,
+  _id: id, title, slug, shortDescription: desc, domain, fullContent: buildContent(title, domain, desc),
+  featuredImage: img, categoryId: categories[0], authorId: author,
   publishedDate: status === 'published' ? new Date(Date.now() - daysAgo * 86400000) : null,
-  readingTimeMinutes: 5,
-  viewsCount: views,
-  featuredStatus: id === 'art-1',
-  status,
-  createdAt: new Date(Date.now() - daysAgo * 86400000),
-  updatedAt: new Date(Date.now() - daysAgo * 86400000)
+  readingTimeMinutes: 5, viewsCount: views, featuredStatus: id === 'art-1', status,
+  createdAt: new Date(Date.now() - daysAgo * 86400000), updatedAt: new Date(Date.now() - daysAgo * 86400000)
 });
 
 let articles = [
@@ -68,7 +83,7 @@ let articles = [
 ];
 
 let activities = [
-  { _id: 'act-1', userId: users[0], action: 'ADMIN_AUTHENTICATED', entityType: 'system', details: { message: 'Administrator logged into the management portal' }, createdAt: new Date() },
+  { _id: 'act-1', userId: users[0], action: 'ADMIN_AUTHENTICATED', entityType: 'system', details: { message: 'Administrator logged into management portal' }, createdAt: new Date() },
   { _id: 'act-2', userId: users[1], action: 'ARTICLE_SUBMITTED', entityType: 'article', details: { title: 'Design Patterns: Implementing the Observer Pattern in TypeScript' }, createdAt: new Date() }
 ];
 

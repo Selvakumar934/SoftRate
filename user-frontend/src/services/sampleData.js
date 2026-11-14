@@ -5,13 +5,46 @@ export const SAMPLE_CATEGORIES = [{
   description: 'Practical tutorials, clean code patterns, system architecture, and software engineering.'
 }];
 
+const buildContent = (title, domain, desc) => `## ${title}
+${desc}
+
+### 1. Architectural Foundations of ${domain}
+In modern software engineering, adopting rigorous **${domain.toLowerCase()}** patterns is essential for building scalable, fault-tolerant, and maintainable systems. Decoupling high-throughput pipelines from underlying storage models ensures that independent services can scale horizontally without causing cascading failures.
+
+### 2. Production Code Implementation
+\`\`\`javascript
+// Production-ready resilient service pattern for ${domain}
+export async function executeOperation(payload, options = {}) {
+  const timeoutMs = options.timeoutMs || 4000;
+  const correlationId = options.traceId || crypto.randomUUID();
+  try {
+    const outcome = await Promise.race([processDomainWorkflow(payload), new Promise((_, reject) => setTimeout(() => reject(new Error('Operation timeout')), timeoutMs))]);
+    return { success: true, correlationId, data: outcome, timestamp: new Date().toISOString() };
+  } catch (error) {
+    console.error(\`[\${correlationId}] Execution failed: \${error.message}\`);
+    throw error;
+  }
+}
+\`\`\`
+
+### 3. Engineering Best Practices & Trade-Offs
+- **Zero-Downtime Resilience**: Deploy with automated health probes and circuit breakers.
+- **Contract Enforcement**: Enforce strict schema boundaries using TypeScript or Protobuf specifications.
+- **Telemetry & Tracing**: Propagate distributed trace IDs across all asynchronous event hops.
+
+### 4. Verified Google Research & Documentation Links
+- [Google Search: ${title} Tutorial & Architecture](https://www.google.com/search?q=${encodeURIComponent(title + ' production architecture')})
+- [Google Search: ${domain} Best Practices 2026](https://www.google.com/search?q=${encodeURIComponent(domain + ' software engineering best practices 2026')})
+- [Google Developers Documentation Portal](https://developers.google.com/)
+- [Google Cloud Architecture Framework](https://cloud.google.com/architecture/framework)`;
+
 const mk = (id, title, slug, desc, domain, author, date, img, readTime = 5, views = 1400) => ({
   _id: id,
   title,
   slug,
   shortDescription: desc,
   domain,
-  fullContent: `## ${title}\n\nComprehensive software engineering tutorial exploring ${title.toLowerCase()}.\n\n### Core Engineering Principles\n- Write testable, decoupled components.\n- Profile memory and latency in high-throughput paths.\n- Implement robust error boundaries and logging.`,
+  fullContent: buildContent(title, domain, desc),
   featuredImage: img,
   categoryId: SAMPLE_CATEGORIES[0],
   authorId: { _id: 'u-1', name: author, avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80', bio: 'Senior Software Engineer' },

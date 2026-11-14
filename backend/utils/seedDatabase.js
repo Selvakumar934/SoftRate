@@ -37,9 +37,9 @@ const seed = async () => {
     }
 
     for (const a of mockStore.articles) {
-      const exists = await Article.findOne({ slug: a.slug });
-      if (!exists) {
-        await Article.create({
+      await Article.findOneAndUpdate(
+        { slug: a.slug },
+        {
           title: a.title,
           slug: a.slug,
           shortDescription: a.shortDescription,
@@ -53,8 +53,9 @@ const seed = async () => {
           publishedDate: a.publishedDate,
           readingTimeMinutes: a.readingTimeMinutes || 5,
           viewsCount: a.viewsCount || 1000
-        });
-      }
+        },
+        { upsert: true, new: true }
+      );
     }
 
     console.log('[Seed] Database successfully populated with 18 articles across 6 domains!');

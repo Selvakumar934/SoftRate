@@ -31,20 +31,18 @@ const AdminDashboardPage = () => {
 
   const filtered = filter === 'all' ? articles : articles.filter((a) => a.status === filter);
   const cards = [
-    { label: 'Total Articles', val: metrics.totalArticles, sub: `${metrics.totalViews || 38260} Views` }, { label: 'Published', val: metrics.publishedArticles, sub: 'Active live posts' },
-    { label: 'Pending Review', val: metrics.pendingArticles, sub: 'Requires moderation', badge: true }, { label: 'Drafts', val: metrics.draftArticles, sub: 'Work in progress' }
+    { label: 'Total Articles', val: metrics.totalArticles, sub: `${metrics.totalViews || 38260} Views` },
+    { label: 'Published', val: metrics.publishedArticles, sub: 'Active live posts' },
+    { label: 'Pending Review', val: metrics.pendingArticles, sub: 'Requires moderation', badge: true },
+    { label: 'Drafts', val: metrics.draftArticles, sub: 'Work in progress' }
   ];
 
   return (
     <div>
       <div className="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom border-dark">
-        <div>
-          <h2 className="fw-bold text-dark mb-0">Administrative Overview</h2>
-          <small className="text-muted">Platform editorial metrics, 5 pending reviews, and article catalog.</small>
-        </div>
+        <div><h2 className="fw-bold text-dark mb-0">Administrative Overview</h2><small className="text-muted">Platform editorial metrics, 5 pending reviews, and article catalog.</small></div>
         <Link to="/articles/create" className="btn btn-dark btn-sm px-4 fw-semibold">+ New Publication</Link>
       </div>
-
       <div className="row g-3 mb-4">
         {cards.map((c, i) => (
           <div key={i} className="col-sm-6 col-lg-3">
@@ -56,7 +54,6 @@ const AdminDashboardPage = () => {
           </div>
         ))}
       </div>
-
       <div className="card border-dark rounded-2 bg-white">
         <div className="p-3 border-bottom border-dark d-flex flex-wrap justify-content-between align-items-center gap-2">
           <h6 className="fw-bold text-dark mb-0">Platform Articles ({filtered.length} of {articles.length})</h6>
