@@ -57,12 +57,12 @@ const BlogDetailPage = () => {
       <GoogleResearchBlock article={article} />
 
       {related.length > 0 && (
-        <div className="pt-4 border-top border-dark">
+        <div className="pt-4 border-top border-light-subtle">
           <h5 className="fw-bold text-dark mb-3">Related Articles</h5>
           <div className="row g-3">
             {related.map((item) => (
               <div key={item._id || item.slug} className="col-md-4">
-                <Link to={`/blogs/${item.slug}`} className="d-block p-3 border border-dark rounded-2 h-100 bg-white text-decoration-none hover-popup">
+                <Link to={`/blogs/${item.slug}`} className="d-block p-3 border border-light-subtle rounded-2 h-100 bg-white text-decoration-none hover-popup">
                   <div className="fw-bold text-dark small mb-1">{item.title}</div>
                   <span className="text-muted small">{item.readingTimeMinutes || 4} min read</span>
                 </Link>

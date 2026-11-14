@@ -1,21 +1,14 @@
 export const FALLBACK_METRICS = {
-  totalArticles: 36,
+  totalArticles: 38,
   publishedArticles: 18,
   pendingArticles: 10,
-  draftArticles: 8,
-  totalViews: 45600
+  draftArticles: 10,
+  totalViews: 58400
 };
 
 const mk = (id, title, desc, domain, status, author, daysAgo, img, views = 1200) => ({
-  _id: id,
-  title,
-  shortDescription: desc,
-  domain,
-  status,
-  authorId: { name: author },
-  viewsCount: views,
-  featuredImage: img,
-  createdAt: new Date(Date.now() - daysAgo * 86400000)
+  _id: id, title, shortDescription: desc, domain, status, authorId: { name: author }, viewsCount: views,
+  featuredImage: img, createdAt: new Date(Date.now() - daysAgo * 86400000)
 });
 
 export const FALLBACK_ADMIN_ARTICLES = [
@@ -30,5 +23,7 @@ export const FALLBACK_ADMIN_ARTICLES = [
   mk('art-p-2', 'Web Security Hardening: Securing Microservices from XSS and CSRF', 'Essential defense-in-depth security strategies for modern APIs.', 'Security', 'pending', 'Vikram Malhotra', 1, 'https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=1200&q=80', 0),
   mk('art-p-6', 'Kubernetes Custom Resource Definitions (CRDs) and Operator Pattern', 'Build declarative Kubernetes extensions in Go.', 'DevOps', 'pending', 'Ananya Iyer', 1, 'https://images.unsplash.com/photo-1667372393119-3d4c48d07fc9?auto=format&fit=crop&w=1200&q=80', 0),
   mk('art-d-1', 'Distributed Tracing and Observability with OpenTelemetry', 'Correlating distributed requests across container boundaries.', 'DevOps', 'draft', 'Aarav Sharma', 5, 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1200&q=80', 0),
-  mk('art-d-4', 'WebAssembly (WASM) in Production: Blazing Fast Client-Side Compute', 'Compiling C++/Rust to WebAssembly in-browser.', 'Frontend', 'draft', 'Aarav Sharma', 4, 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80', 0)
+  mk('art-d-4', 'WebAssembly (WASM) in Production: Blazing Fast Client-Side Compute', 'Compiling C++/Rust to WebAssembly in-browser.', 'Frontend', 'draft', 'Aarav Sharma', 4, 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80', 0),
+  mk('art-d-9', 'Resilient Sagas with Temporal Workflows in Microservices', 'Implementing distributed transactions across microservices.', 'Microservices', 'draft', 'Karthik Raman', 2, 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80', 0),
+  mk('art-d-10', 'Automating Code Quality with ESLint and SonarQube in CI Pipelines', 'Static code analysis and automated formatting gates.', 'Clean Code', 'draft', 'Divya Nair', 3, 'https://images.unsplash.com/photo-1516259762381-22954d7d3ad2?auto=format&fit=crop&w=1200&q=80', 0)
 ];

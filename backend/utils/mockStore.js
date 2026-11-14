@@ -1,41 +1,22 @@
 // In-Memory Data Store for DevSphere Technology Blog
 const categories = [{ _id: 'cat-1', name: 'Software Development', slug: 'software-development', description: 'Practical tutorials and architecture guides.', articleCount: 18 }];
+const mkU = (id, name, email, role, url, tw) => ({ _id: id, name, email, role, accountStatus: 'active', websiteUrl: url, socialMediaId: tw });
 const users = [
-  { _id: 'admin-dev-01', name: 'DevSphere Administrator', email: 'admin@devsphere.com', role: 'admin', accountStatus: 'active', websiteUrl: 'https://devsphere.com', socialMediaId: '@devsphere_admin' },
-  { _id: 'user-1', name: 'Aarav Sharma', email: 'aarav.sharma@devsphere.com', role: 'user', accountStatus: 'active', websiteUrl: 'https://github.com/aaravsharma-dev', socialMediaId: '@aarav_codes' },
-  { _id: 'user-2', name: 'Priya Patel', email: 'priya.patel@devsphere.com', role: 'user', accountStatus: 'active', websiteUrl: 'https://priyapatel.tech', socialMediaId: '@priya_patel_io' },
-  { _id: 'user-3', name: 'Rohan Verma', email: 'rohan.verma@devsphere.com', role: 'user', accountStatus: 'active', websiteUrl: 'https://github.com/rohanverma-eng', socialMediaId: '@rohanv_arch' },
-  { _id: 'user-4', name: 'Ananya Iyer', email: 'ananya.iyer@devsphere.com', role: 'user', accountStatus: 'active', websiteUrl: 'https://ananyaiyer.dev', socialMediaId: '@ananya_systems' },
-  { _id: 'user-5', name: 'Vikram Malhotra', email: 'vikram.malhotra@devsphere.com', role: 'user', accountStatus: 'active', websiteUrl: 'https://vikrammalhotra.io', socialMediaId: '@vikram_devops' },
-  { _id: 'user-6', name: 'Neha Gupta', email: 'neha.gupta@devsphere.com', role: 'user', accountStatus: 'active', websiteUrl: 'https://github.com/nehagupta-cloud', socialMediaId: '@neha_cloud_eng' }
+  mkU('admin-dev-01', 'DevSphere Administrator', 'admin@devsphere.com', 'admin', 'https://devsphere.com', '@devsphere_admin'),
+  mkU('user-1', 'Aarav Sharma', 'aarav.sharma@devsphere.com', 'user', 'https://github.com/aaravsharma-dev', '@aarav_codes'),
+  mkU('user-2', 'Priya Patel', 'priya.patel@devsphere.com', 'user', 'https://priyapatel.tech', '@priya_patel_io'),
+  mkU('user-3', 'Rohan Verma', 'rohan.verma@devsphere.com', 'user', 'https://github.com/rohanverma-eng', '@rohanv_arch'),
+  mkU('user-4', 'Ananya Iyer', 'ananya.iyer@devsphere.com', 'user', 'https://ananyaiyer.dev', '@ananya_systems'),
+  mkU('user-5', 'Vikram Malhotra', 'vikram.malhotra@devsphere.com', 'user', 'https://vikrammalhotra.io', '@vikram_devops'),
+  mkU('user-6', 'Neha Gupta', 'neha.gupta@devsphere.com', 'user', 'https://github.com/nehagupta-cloud', '@neha_cloud_eng'),
+  mkU('user-7', 'Karthik Raman', 'karthik.raman@devsphere.com', 'user', 'https://karthikraman.dev', '@karthik_scale'),
+  mkU('user-8', 'Divya Nair', 'divya.nair@devsphere.com', 'user', 'https://divyanair.tech', '@divya_nair_dev'),
+  mkU('user-9', 'Siddharth Rao', 'siddharth.rao@devsphere.com', 'user', 'https://github.com/siddharth-rao', '@siddharth_sys'),
+  mkU('user-10', 'Pooja Kulkarni', 'pooja.kulkarni@devsphere.com', 'user', 'https://poojakulkarni.io', '@pooja_backend'),
+  mkU('user-11', 'Arjun Nambiar', 'arjun.nambiar@devsphere.com', 'user', 'https://arjunnambiar.dev', '@arjun_devops')
 ];
 
-const buildContent = (title, domain, desc) => `## ${title}
-${desc}
-
-### 1. Architectural Foundations of ${domain}
-In modern software engineering, adopting rigorous **${domain.toLowerCase()}** patterns is essential for building scalable, fault-tolerant, and maintainable systems. Decoupling high-throughput pipelines from underlying storage models ensures that independent services can scale horizontally without causing cascading failures.
-
-### 2. Production Code Implementation
-\`\`\`javascript
-// Production-ready resilient service pattern for ${domain}
-export async function executeOperation(payload, options = {}) {
-  const timeoutMs = options.timeoutMs || 4000;
-  const correlationId = options.traceId || crypto.randomUUID();
-  try {
-    const outcome = await Promise.race([processDomainWorkflow(payload), new Promise((_, reject) => setTimeout(() => reject(new Error('Operation timeout')), timeoutMs))]);
-    return { success: true, correlationId, data: outcome, timestamp: new Date().toISOString() };
-  } catch (error) {
-    console.error(\`[\${correlationId}] Execution failed: \${error.message}\`);
-    throw error;
-  }
-}
-\`\`\`
-
-### 3. Engineering Best Practices & Trade-Offs
-- **Zero-Downtime Resilience**: Deploy with automated health probes and circuit breakers.
-- **Contract Enforcement**: Enforce strict schema boundaries using TypeScript or Protobuf specifications.
-- **Telemetry & Tracing**: Propagate distributed trace IDs across all asynchronous event hops.`;
+const buildContent = (title, domain, desc) => `## ${title}\n${desc}\n\n### 1. Architectural Foundations of ${domain}\nIn modern software engineering, adopting rigorous **${domain.toLowerCase()}** patterns is essential for building scalable, fault-tolerant, and maintainable systems. Decoupling high-throughput pipelines from underlying storage models ensures horizontal scale.\n\n### 2. Production Code Implementation\n\`\`\`javascript\nexport async function executeOperation(payload, options = {}) {\n  const timeoutMs = options.timeoutMs || 4000;\n  const correlationId = options.traceId || crypto.randomUUID();\n  try {\n    const outcome = await processDomainWorkflow(payload);\n    return { success: true, correlationId, data: outcome, timestamp: new Date().toISOString() };\n  } catch (error) {\n    throw error;\n  }\n}\n\`\`\`\n\n### 3. Engineering Best Practices & Trade-Offs\n- **Zero-Downtime Resilience**: Deploy with automated health probes and circuit breakers.\n- **Contract Enforcement**: Enforce strict schema boundaries using TypeScript or Protobuf specifications.\n- **Telemetry & Tracing**: Propagate distributed trace IDs across all asynchronous event hops.`;
 
 const createArt = (id, title, slug, desc, domain, status, author, daysAgo, img, views = 1200) => ({
   _id: id, title, slug, shortDescription: desc, domain, fullContent: buildContent(title, domain, desc),
@@ -78,7 +59,7 @@ let articles = [
   createArt('art-p-9', 'Defensive API Design: Zero-Trust Input Validation with Zod and TypeScript', 'defensive-api-design-zero-trust-input-validation-with-zod-and-typescript', 'Preventing injection attacks and runtime payload corruptions with strict schema boundaries.', 'TypeScript', 'pending', users[2], 3, 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80', 0),
   createArt('art-p-10', 'Architecting Multi-Tenant Microservices with Tenant Isolation', 'architecting-multi-tenant-microservices-with-tenant-isolation', 'Strategies for row-level security and schema-per-tenant isolation in enterprise software.', 'Microservices', 'pending', users[1], 1, 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80', 0),
 
-  // 8 Draft Articles
+  // 10 Draft Articles
   createArt('art-d-1', 'Distributed Tracing and Observability with OpenTelemetry', 'distributed-tracing-and-observability-with-opentelemetry', 'Correlating distributed requests across container boundaries.', 'DevOps', 'draft', users[1], 5, 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1200&q=80', 0),
   createArt('art-d-2', 'Optimizing React 19 Compiler Performance in High-Frequency UIs', 'optimizing-react-19-compiler-performance-in-high-frequency-uis', 'Exploiting the new React Compiler memoization pipeline for 60fps UIs.', 'Frontend', 'draft', users[2], 6, 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&w=1200&q=80', 0),
   createArt('art-d-3', 'Zero-Trust Network Access for Engineering Infrastructure', 'zero-trust-network-access-for-engineering-infrastructure', 'Eliminating perimeter security models with identity-aware proxies.', 'Security', 'draft', users[5], 7, 'https://images.unsplash.com/photo-1510511459019-5dda7724fd87?auto=format&fit=crop&w=1200&q=80', 0),
@@ -86,7 +67,9 @@ let articles = [
   createArt('art-d-5', 'Continuous Integration Security: Hardening GitHub Actions CI/CD Pipelines', 'continuous-integration-security-hardening-github-actions-cicd-pipelines', 'Preventing malicious script injections, securing OIDC credentials, and pin dependency SHAs.', 'DevOps', 'draft', users[4], 5, 'https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?auto=format&fit=crop&w=1200&q=80', 0),
   createArt('art-d-6', 'Demystifying Database Sharding and Consistent Hashing in Distributed Systems', 'demystifying-database-sharding-and-consistent-hashing-in-distributed-systems', 'Horizontal partition strategies, virtual nodes, and minimal remapping during node failure.', 'Database', 'draft', users[3], 6, 'https://images.unsplash.com/photo-1544383835-bda2bc66a55d?auto=format&fit=crop&w=1200&q=80', 0),
   createArt('art-d-7', 'Automating Performance Benchmarking with k6 and Grafana Dashboards', 'automating-performance-benchmarking-with-k6-and-grafana-dashboards', 'Stress testing microservices, detecting latency regressions, and graphing p99 response times.', 'Testing', 'draft', users[6], 7, 'https://images.unsplash.com/photo-1504639725590-34d0984388bd?auto=format&fit=crop&w=1200&q=80', 0),
-  createArt('art-d-8', 'Event Sourcing with CQRS: Practical Implementation Patterns', 'event-sourcing-with-cqrs-practical-implementation-patterns', 'Separating read and write data stores with append-only immutable event streams.', 'Architecture', 'draft', users[1], 3, 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80', 0)
+  createArt('art-d-8', 'Event Sourcing with CQRS: Practical Implementation Patterns', 'event-sourcing-with-cqrs-practical-implementation-patterns', 'Separating read and write data stores with append-only immutable event streams.', 'Architecture', 'draft', users[1], 3, 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80', 0),
+  createArt('art-d-9', 'Resilient Sagas with Temporal Workflows in Microservices', 'resilient-sagas-with-temporal-workflows-in-microservices', 'Implementing distributed transactions across microservices using event-driven sagas.', 'Microservices', 'draft', users[7], 2, 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80', 0),
+  createArt('art-d-10', 'Automating Code Quality with ESLint and SonarQube in CI Pipelines', 'automating-code-quality-with-eslint-and-sonarqube-in-ci-pipelines', 'Static code analysis, vulnerability scanning, and automated formatting gates.', 'Clean Code', 'draft', users[8], 3, 'https://images.unsplash.com/photo-1516259762381-22954d7d3ad2?auto=format&fit=crop&w=1200&q=80', 0)
 ];
 
 let activities = [

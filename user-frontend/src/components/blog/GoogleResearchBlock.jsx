@@ -27,8 +27,8 @@ const GoogleResearchBlock = ({ article }) => {
   ];
 
   return (
-    <div className="card border-dark rounded-2 p-4 bg-white my-4">
-      <div className="d-flex align-items-center gap-2 mb-2 pb-2 border-bottom border-dark">
+    <div className="my-4 py-2">
+      <div className="d-flex align-items-center gap-2 mb-2">
         <i className="bi bi-google fs-5 text-dark"></i>
         <h5 className="fw-bold text-dark mb-0">Google Research & Documentation Links</h5>
       </div>
