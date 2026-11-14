@@ -11,7 +11,7 @@ const authenticateToken = async (req, res, next) => {
   const token = authHeader.split(' ')[1];
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'devsphere_fallback_secret_key_2026');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'devsphere_super_secret_jwt_key_2026_secure_xyz_987');
 
     // If MongoDB is connected and not a dev ID
     if (mongoose.connection.readyState === 1 && !decoded.id.startsWith('admin-dev')) {

@@ -9,7 +9,7 @@ const DEFAULT_ADMIN = {
   email: 'admin@devsphere.com',
   role: 'admin'
 };
-const DEFAULT_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImFkbWluLWRldi0wMSIsImVtYWlsIjoiYWRtaW5AZGV2c3BoZXJlLmNvbSIsIm5hbWUiOiJEZXZTcGhlcmUgQWRtaW5pc3RyYXRvciIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc5NDUzMzIxNiwiZXhwIjoxNzk1MTM4MDE2fQ.wH-iZtTzY46Fp3z98XbZ2i3lD2J0fNf4m8YqVj7wKpA';
+const DEFAULT_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImFkbWluLWRldi0wMSIsImVtYWlsIjoiYWRtaW5AZGV2c3BoZXJlLmNvbSIsIm5hbWUiOiJEZXZTcGhlcmUgQWRtaW5pc3RyYXRvciIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc5NDYxODc3NiwiZXhwIjoxNzk1MjIzNTc2fQ.O4XFPTMvKt8WsXmz3Fkk8qCvyj-MdyMFjEsDEjoyFzU';
 
 export const AdminAuthProvider = ({ children }) => {
   const [adminUser, setAdminUser] = useState(() => {

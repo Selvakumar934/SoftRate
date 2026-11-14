@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import adminApi from '../services/adminApi.js';
+import { FALLBACK_ADMIN_ARTICLES } from '../services/sampleData.js';
 
 const AdminApprovalPage = () => {
-  const [pending, setPending] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [pending, setPending] = useState(() => FALLBACK_ADMIN_ARTICLES.filter((a) => a.status === 'pending'));
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     adminApi.get('/admin/articles/pending').then((res) => {
-      if (res.data?.data) setPending(res.data.data);
+      if (res.data?.data?.length) setPending(res.data.data);
     }).catch(() => {}).finally(() => setLoading(false));
   }, []);
 

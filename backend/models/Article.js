@@ -7,6 +7,7 @@ const articleSchema = new mongoose.Schema(
     shortDescription: { type: String, required: true, trim: true },
     fullContent: { type: String, required: true },
     featuredImage: { type: String, required: true },
+    domain: { type: String, default: 'General' },
     authorId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     categoryId: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' },
     tags: [{ type: String, trim: true }],

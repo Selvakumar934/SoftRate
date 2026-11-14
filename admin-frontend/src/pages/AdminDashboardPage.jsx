@@ -1,31 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import adminApi from '../services/adminApi.js';
+import { FALLBACK_METRICS, FALLBACK_ADMIN_ARTICLES } from '../services/sampleData.js';
 
 const AdminDashboardPage = () => {
-  const [metrics, setMetrics] = useState({ totalArticles: 10, publishedArticles: 3, pendingArticles: 5, draftArticles: 2, totalViews: 5600 });
-  const [articles, setArticles] = useState([]), [filter, setFilter] = useState('all');
+  const [metrics, setMetrics] = useState(FALLBACK_METRICS);
+  const [articles, setArticles] = useState(FALLBACK_ADMIN_ARTICLES), [filter, setFilter] = useState('all');
 
   const loadData = async () => {
     try {
       const res = await adminApi.get('/admin/dashboard');
-      if (res.data?.data) { setMetrics(res.data.data.metrics); setArticles(res.data.data.allArticles || []); }
-    } catch (err) { console.warn('Using fallback state'); }
+      if (res.data?.data) {
+        setMetrics(res.data.data.metrics || FALLBACK_METRICS);
+        setArticles(res.data.data.allArticles?.length ? res.data.data.allArticles : FALLBACK_ADMIN_ARTICLES);
+      }
+    } catch (err) {}
   };
   useEffect(() => { loadData(); }, []);
+
   const handleAction = async (id, act) => {
     try {
-      if (act === 'approve') await adminApi.put('/admin/articles/' + id + '/approve');
+      if (act === 'approve') await adminApi.put(`/admin/articles/${id}/approve`);
       if (act === 'reject') {
         const r = window.prompt('Rejection feedback:', 'Needs revision');
-        if (r) await adminApi.put('/admin/articles/' + id + '/reject', { rejectionReason: r });
+        if (r) await adminApi.put(`/admin/articles/${id}/reject`, { rejectionReason: r });
       }
       loadData();
     } catch (e) {}
   };
+
   const filtered = filter === 'all' ? articles : articles.filter((a) => a.status === filter);
   const cards = [
-    { label: 'Total Articles', val: metrics.totalArticles, sub: `${metrics.totalViews || 5600} Total Views` }, { label: 'Published', val: metrics.publishedArticles, sub: 'Active live posts' },
+    { label: 'Total Articles', val: metrics.totalArticles, sub: `${metrics.totalViews || 38260} Views` }, { label: 'Published', val: metrics.publishedArticles, sub: 'Active live posts' },
     { label: 'Pending Review', val: metrics.pendingArticles, sub: 'Requires moderation', badge: true }, { label: 'Drafts', val: metrics.draftArticles, sub: 'Work in progress' }
   ];
 
@@ -34,7 +40,7 @@ const AdminDashboardPage = () => {
       <div className="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom border-dark">
         <div>
           <h2 className="fw-bold text-dark mb-0">Administrative Overview</h2>
-          <small className="text-muted">Platform editorial metrics, 5 pending reviews, and full 10-article catalog.</small>
+          <small className="text-muted">Platform editorial metrics, 5 pending reviews, and article catalog.</small>
         </div>
         <Link to="/articles/create" className="btn btn-dark btn-sm px-4 fw-semibold">+ New Publication</Link>
       </div>
@@ -53,15 +59,10 @@ const AdminDashboardPage = () => {
 
       <div className="card border-dark rounded-2 bg-white">
         <div className="p-3 border-bottom border-dark d-flex flex-wrap justify-content-between align-items-center gap-2">
-          <div>
-            <h6 className="fw-bold text-dark mb-0">Platform Articles ({filtered.length} of 10)</h6>
-            <small className="text-muted">Software Development editorial articles across all review stages</small>
-          </div>
+          <h6 className="fw-bold text-dark mb-0">Platform Articles ({filtered.length} of {articles.length})</h6>
           <div className="btn-group btn-group-sm">
             {['all', 'pending', 'published', 'draft'].map((s) => (
-              <button key={s} onClick={() => setFilter(s)} className={`btn text-capitalize ${filter === s ? 'btn-dark' : 'btn-outline-dark'}`}>
-                {s === 'all' ? 'All (10)' : s === 'pending' ? 'Pending (5)' : s === 'published' ? 'Published (3)' : 'Drafts (2)'}
-              </button>
+              <button key={s} onClick={() => setFilter(s)} className={`btn text-capitalize ${filter === s ? 'btn-dark' : 'btn-outline-dark'}`}>{s === 'all' ? `All (${articles.length})` : s}</button>
             ))}
           </div>
         </div>

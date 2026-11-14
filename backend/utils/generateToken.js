@@ -8,7 +8,7 @@ const generateToken = (user) => {
       name: user.name,
       role: user.role
     },
-    process.env.JWT_SECRET || 'devsphere_fallback_secret_key_2026',
+    process.env.JWT_SECRET || 'devsphere_super_secret_jwt_key_2026_secure_xyz_987',
     { expiresIn: '7d' }
   );
 };

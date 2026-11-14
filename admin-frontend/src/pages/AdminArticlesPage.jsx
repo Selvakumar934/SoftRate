@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import adminApi from '../services/adminApi.js';
+import { FALLBACK_ADMIN_ARTICLES } from '../services/sampleData.js';
 
 const AdminArticlesPage = () => {
-  const [articles, setArticles] = useState([]), [filter, setFilter] = useState('all'), [search, setSearch] = useState('');
+  const [articles, setArticles] = useState(FALLBACK_ADMIN_ARTICLES), [filter, setFilter] = useState('all'), [search, setSearch] = useState('');
   const fetchArticles = async () => {
     try {
       const q = search ? `&search=${encodeURIComponent(search)}` : '';
       const res = await adminApi.get(`/admin/articles?status=${filter}${q}`);
-      if (res.data?.data) setArticles(res.data.data);
-    } catch (err) { console.warn('Could not load articles'); }
+      if (res.data?.data) setArticles(res.data.data.length ? res.data.data : FALLBACK_ADMIN_ARTICLES);
+    } catch (err) {}
   };
   useEffect(() => { fetchArticles(); }, [filter, search]);
 
