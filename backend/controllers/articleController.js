@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Article = require('../models/Article.js'), User = require('../models/User.js'), Category = require('../models/Category.js'), mockStore = require('../utils/mockStore.js');
 const isDb = () => mongoose.connection.readyState === 1;
+const artF = (k) => mongoose.isValidObjectId(k) ? { _id: k } : { slug: k };
 
 exports.getArticles = async (req, res) => {
   const { search, domain, limit } = req.query;
@@ -74,23 +75,23 @@ exports.createArticle = async (req, res) => {
 };
 
 exports.updateArticle = async (req, res) => {
-  if (isDb()) { try { const doc = await Article.findByIdAndUpdate(req.params.id, req.body, { returnDocument: 'after' }); if (doc) return res.json({ success: true, data: doc }); } catch (e) {} }
-  const art = mockStore.articles.find((a) => a._id === req.params.id);
+  if (isDb()) { try { const doc = await Article.findOneAndUpdate(artF(req.params.id), req.body, { returnDocument: 'after' }); if (doc) return res.json({ success: true, data: doc }); } catch (e) {} }
+  const art = mockStore.articles.find((a) => a._id === req.params.id || a.slug === req.params.id);
   if (!art) return res.status(404).json({ success: false, message: 'Not found' });
   Object.assign(art, req.body, { updatedAt: new Date() });
   res.json({ success: true, data: art });
 };
 
 exports.submitArticle = async (req, res) => {
-  if (isDb()) { try { const doc = await Article.findByIdAndUpdate(req.params.id, { status: 'pending' }, { returnDocument: 'after' }); if (doc) return res.json({ success: true, data: doc }); } catch (e) {} }
-  const art = mockStore.articles.find((a) => a._id === req.params.id);
+  if (isDb()) { try { const doc = await Article.findOneAndUpdate(artF(req.params.id), { status: 'pending' }, { returnDocument: 'after' }); if (doc) return res.json({ success: true, data: doc }); } catch (e) {} }
+  const art = mockStore.articles.find((a) => a._id === req.params.id || a.slug === req.params.id);
   if (art) art.status = 'pending';
   res.json({ success: true, data: art });
 };
 
 exports.deleteArticle = async (req, res) => {
-  if (isDb()) { try { await Article.findByIdAndDelete(req.params.id); } catch (e) {} }
-  const idx = mockStore.articles.findIndex((a) => a._id === req.params.id);
+  if (isDb()) { try { await Article.findOneAndDelete(artF(req.params.id)); } catch (e) {} }
+  const idx = mockStore.articles.findIndex((a) => a._id === req.params.id || a.slug === req.params.id);
   if (idx !== -1) mockStore.articles.splice(idx, 1);
   res.json({ success: true, message: 'Article deleted' });
 };

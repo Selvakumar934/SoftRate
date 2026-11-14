@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Article = require('../models/Article.js'), User = require('../models/User.js'), mockStore = require('../utils/mockStore.js');
 const isDb = () => mongoose.connection.readyState === 1;
+const artF = (k) => mongoose.isValidObjectId(k) ? { _id: k } : { slug: k };
 
 exports.getDashboard = async (req, res) => {
   try {
@@ -27,7 +28,7 @@ exports.getPendingArticles = async (req, res) => {
 
 exports.approveArticle = async (req, res) => {
   if (isDb()) {
-    try { const a = await Article.findByIdAndUpdate(req.params.id, { status: 'published', publishedDate: new Date() }, { returnDocument: 'after' }) || await Article.findOneAndUpdate({ slug: req.params.id }, { status: 'published', publishedDate: new Date() }, { returnDocument: 'after' }); if (a) return res.json({ success: true, message: 'Article approved', data: a }); } catch (e) {}
+    try { const a = await Article.findOneAndUpdate(artF(req.params.id), { status: 'published', publishedDate: new Date() }, { returnDocument: 'after' }); if (a) return res.json({ success: true, message: 'Article approved', data: a }); } catch (e) {}
   }
   const art = mockStore.articles.find((a) => a._id === req.params.id || a.slug === req.params.id);
   if (art) { art.status = 'published'; art.publishedDate = new Date(); }
@@ -37,7 +38,7 @@ exports.approveArticle = async (req, res) => {
 exports.rejectArticle = async (req, res) => {
   const r = req.body.rejectionReason || 'Requires revision';
   if (isDb()) {
-    try { const a = await Article.findByIdAndUpdate(req.params.id, { status: 'rejected', rejectionReason: r }, { returnDocument: 'after' }) || await Article.findOneAndUpdate({ slug: req.params.id }, { status: 'rejected', rejectionReason: r }, { returnDocument: 'after' }); if (a) return res.json({ success: true, message: 'Article rejected', data: a }); } catch (e) {}
+    try { const a = await Article.findOneAndUpdate(artF(req.params.id), { status: 'rejected', rejectionReason: r }, { returnDocument: 'after' }); if (a) return res.json({ success: true, message: 'Article rejected', data: a }); } catch (e) {}
   }
   const art = mockStore.articles.find((a) => a._id === req.params.id || a.slug === req.params.id);
   if (art) { art.status = 'rejected'; art.rejectionReason = r; }
@@ -45,10 +46,7 @@ exports.rejectArticle = async (req, res) => {
 };
 
 exports.deleteArticleAdmin = async (req, res) => {
-  if (isDb()) {
-    try { await Article.findByIdAndDelete(req.params.id); } catch (e) {}
-    try { await Article.findOneAndDelete({ slug: req.params.id }); } catch (e) {}
-  }
+  if (isDb()) { try { await Article.findOneAndDelete(artF(req.params.id)); } catch (e) {} }
   const idx = mockStore.articles.findIndex((a) => a._id === req.params.id || a.slug === req.params.id);
   if (idx !== -1) mockStore.articles.splice(idx, 1);
   res.json({ success: true, message: 'Article deleted permanently' });

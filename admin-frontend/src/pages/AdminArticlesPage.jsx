@@ -14,14 +14,15 @@ const AdminArticlesPage = () => {
   };
   useEffect(() => { fetchArticles(); }, [filter, search]);
 
-  const handleAction = async (id, act) => {
+  const handleAction = async (id, act, slug) => {
+    const key = slug || id;
     try {
-      if (act === 'approve') await adminApi.put(`/admin/articles/${id}/approve`);
-      if (act === 'reject') { const r = window.prompt('Rejection feedback:', 'Needs revision'); if (r) await adminApi.put(`/admin/articles/${id}/reject`, { rejectionReason: r }); }
-      if (act === 'delete' && window.confirm('Delete this article?')) await adminApi.delete(`/articles/${id}`);
+      if (act === 'approve') await adminApi.put(`/admin/articles/${key}/approve`);
+      if (act === 'reject') { const r = window.prompt('Rejection feedback:', 'Needs revision'); if (r) await adminApi.put(`/admin/articles/${key}/reject`, { rejectionReason: r }); }
+      if (act === 'delete' && window.confirm('Delete this article?')) await adminApi.delete(`/admin/articles/${key}`);
       fetchArticles();
     } catch (e) {}
-    setArticles((p) => act === 'delete' ? p.filter((a) => a._id !== id) : p.map((a) => a._id === id ? { ...a, status: act === 'approve' ? 'published' : 'rejected' } : a));
+    setArticles((p) => act === 'delete' ? p.filter((a) => a._id !== id && a.slug !== key) : p.map((a) => (a._id === id || a.slug === key) ? { ...a, status: act === 'approve' ? 'published' : 'rejected' } : a));
   };
   const displayed = articles.filter((a) => filter === 'all' || a.status === filter).filter((a) => !search || a.title?.toLowerCase().includes(search.toLowerCase()) || a.authorId?.name?.toLowerCase().includes(search.toLowerCase()));
 
@@ -74,12 +75,12 @@ const AdminArticlesPage = () => {
                     <div className="btn-group btn-group-sm">
                       {item.status === 'pending' ? (
                         <>
-                          <button onClick={() => handleAction(item._id, 'approve')} className="btn btn-dark">Approve</button>
-                          <button onClick={() => handleAction(item._id, 'reject')} className="btn btn-outline-dark">Reject</button>
+                          <button onClick={() => handleAction(item._id, 'approve', item.slug)} className="btn btn-dark">Approve</button>
+                          <button onClick={() => handleAction(item._id, 'reject', item.slug)} className="btn btn-outline-dark">Reject</button>
                         </>
                       ) : <a href={`http://localhost:5173/blogs/${item.slug}`} target="_blank" rel="noreferrer" className="btn btn-outline-dark">View</a>}
                       <Link to={`/articles/edit/${item._id}`} className="btn btn-outline-dark">Edit</Link>
-                      <button onClick={() => handleAction(item._id, 'delete')} className="btn btn-outline-dark">Delete</button>
+                      <button onClick={() => handleAction(item._id, 'delete', item.slug)} className="btn btn-outline-dark">Delete</button>
                     </div>
                   </td>
                 </tr>

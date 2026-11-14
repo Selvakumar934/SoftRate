@@ -9,17 +9,21 @@ import { SAMPLE_REVIEWS } from '../services/sampleReviews.js';
 
 const AdminPortalPage = () => {
   const [tab, setTab] = useState('articles');
-  const [articles, setArticles] = useState(SAMPLE_ADMIN_ARTICLES);
-  const [users, setUsers] = useState(SAMPLE_AUTHORS);
-  const [reviews, setReviews] = useState(SAMPLE_REVIEWS);
-  const navigate = useNavigate();
-  const token = localStorage.getItem('devsphere_admin_token');
+  const [articles, setArticles] = useState(() => {
+    try { const s = localStorage.getItem('devsphere_admin_articles'); if (s) return JSON.parse(s); } catch (e) {}
+    return SAMPLE_ADMIN_ARTICLES;
+  });
+  const [users, setUsers] = useState(SAMPLE_AUTHORS), [reviews, setReviews] = useState(SAMPLE_REVIEWS);
+  const navigate = useNavigate(), token = localStorage.getItem('devsphere_admin_token');
   const authHeaders = { headers: { Authorization: `Bearer ${token}` } };
 
   const loadData = async () => {
     try {
       const res = await api.get('/admin/dashboard', authHeaders);
-      if (res.data?.data?.allArticles?.length) setArticles(res.data.data.allArticles);
+      if (res.data?.data?.allArticles?.length) {
+        setArticles(res.data.data.allArticles);
+        localStorage.setItem('devsphere_admin_articles', JSON.stringify(res.data.data.allArticles));
+      }
       const uRes = await api.get('/admin/users', authHeaders);
       if (uRes.data?.data?.length) setUsers(uRes.data.data);
       const rRes = await api.get('/reviews', authHeaders);
@@ -27,24 +31,21 @@ const AdminPortalPage = () => {
     } catch (e) {}
   };
 
-  useEffect(() => {
-    if (!token) { navigate('/admin/login'); return; }
-    loadData();
-  }, [token]);
+  useEffect(() => { if (!token) { navigate('/admin/login'); return; } loadData(); }, [token]);
 
-  const handleAction = async (id, act) => {
+  const handleAction = async (id, act, slug) => {
+    const key = slug || id;
     try {
-      if (act === 'approve') await api.put(`/admin/articles/${id}/approve`, {}, authHeaders);
-      if (act === 'reject') {
-        const r = window.prompt('Rejection feedback:', 'Please revise.');
-        if (r) await api.put(`/admin/articles/${id}/reject`, { rejectionReason: r }, authHeaders);
-      }
-      if (act === 'delete' && window.confirm('Permanently delete this article from MongoDB?')) {
-        await api.delete(`/admin/articles/${id}`, authHeaders);
-      }
-      loadData();
+      if (act === 'approve') await api.put(`/admin/articles/${key}/approve`, {}, authHeaders);
+      if (act === 'reject') { const r = window.prompt('Rejection feedback:', 'Please revise.'); if (r) await api.put(`/admin/articles/${key}/reject`, { rejectionReason: r }, authHeaders); }
+      if (act === 'delete' && window.confirm('Permanently delete this article from MongoDB?')) await api.delete(`/admin/articles/${key}`, authHeaders);
     } catch (err) {}
-    setArticles((p) => act === 'delete' ? p.filter((a) => a._id !== id) : p.map((a) => a._id === id ? { ...a, status: act === 'approve' ? 'published' : 'rejected' } : a));
+    setArticles((prev) => {
+      const updated = act === 'delete' ? prev.filter((a) => a._id !== id && a.slug !== key) : prev.map((a) => (a._id === id || a.slug === key) ? { ...a, status: act === 'approve' ? 'published' : 'rejected' } : a);
+      try { localStorage.setItem('devsphere_admin_articles', JSON.stringify(updated)); } catch (e) {}
+      return updated;
+    });
+    setTimeout(() => loadData(), 500);
   };
 
   const logout = () => {

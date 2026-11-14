@@ -12,20 +12,22 @@ const AdminApprovalPage = () => {
     }).catch(() => {}).finally(() => setLoading(false));
   }, []);
 
-  const handleApprove = async (id) => {
+  const handleApprove = async (id, slug) => {
+    const key = slug || id;
     try {
-      await adminApi.put(`/admin/articles/${id}/approve`);
+      await adminApi.put(`/admin/articles/${key}/approve`);
     } catch (e) {}
-    setPending(pending.filter((a) => a._id !== id));
+    setPending((prev) => prev.filter((a) => a._id !== id && a.slug !== key));
   };
 
-  const handleReject = async (id) => {
+  const handleReject = async (id, slug) => {
+    const key = slug || id;
     const reason = window.prompt('Enter rejection feedback:', 'Please revise the article content.');
     if (!reason) return;
     try {
-      await adminApi.put(`/admin/articles/${id}/reject`, { rejectionReason: reason });
+      await adminApi.put(`/admin/articles/${key}/reject`, { rejectionReason: reason });
     } catch (e) {}
-    setPending(pending.filter((a) => a._id !== id));
+    setPending((prev) => prev.filter((a) => a._id !== id && a.slug !== key));
   };
 
   return (
@@ -66,8 +68,8 @@ const AdminApprovalPage = () => {
                     </td>
                     <td className="text-end pe-3 py-3">
                       <div className="btn-group btn-group-sm">
-                        <button onClick={() => handleApprove(item._id)} className="btn btn-dark">Approve</button>
-                        <button onClick={() => handleReject(item._id)} className="btn btn-outline-dark">Reject</button>
+                        <button onClick={() => handleApprove(item._id, item.slug)} className="btn btn-dark">Approve</button>
+                        <button onClick={() => handleReject(item._id, item.slug)} className="btn btn-outline-dark">Reject</button>
                       </div>
                     </td>
                   </tr>

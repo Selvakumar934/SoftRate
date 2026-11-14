@@ -47,10 +47,10 @@ const AdminArticlesTable = ({ articles = [], onAction }) => {
                   <td><span className="badge bg-dark text-white text-uppercase" style={{ fontSize: '0.65rem' }}>{item.status}</span></td>
                   <td className="text-end pe-3 py-2">
                     <div className="btn-group btn-group-sm">
-                      {item.status === 'pending' && <button onClick={() => onAction(item._id, 'approve')} className="btn btn-dark btn-sm">Approve</button>}
-                      {item.status === 'pending' && <button onClick={() => onAction(item._id, 'reject')} className="btn btn-outline-dark btn-sm">Reject</button>}
+                      {item.status === 'pending' && <button onClick={() => onAction(item._id, 'approve', item.slug)} className="btn btn-dark btn-sm">Approve</button>}
+                      {item.status === 'pending' && <button onClick={() => onAction(item._id, 'reject', item.slug)} className="btn btn-outline-dark btn-sm">Reject</button>}
                       <Link to={`/dashboard/edit/${item._id || item.slug}`} className="btn btn-outline-dark btn-sm">Edit</Link>
-                      <button onClick={() => onAction(item._id, 'delete')} className="btn btn-outline-dark btn-sm">Delete</button>
+                      <button onClick={() => onAction(item._id, 'delete', item.slug)} className="btn btn-outline-dark btn-sm">Delete</button>
                     </div>
                   </td>
                 </tr>
