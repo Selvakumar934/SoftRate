@@ -13,11 +13,20 @@ export const FALLBACK_USERS = [
   { _id: 'u-10', name: 'Pooja Kulkarni', email: 'pooja.kulkarni@devsphere.com', role: 'user', websiteUrl: 'https://poojakulkarni.io', socialMediaId: '@pooja_backend' }
 ];
 
-const img = 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80';
-const a = (id, title, slug, domain, status, author, views = 1200) => ({
+const T_IMG = {
+  Microservices: ['photo-1558494949-ef010cbdcc31', 'photo-1544197150-b99a580bb7a8', 'photo-1551288049-bebda4e38f71'],
+  'Clean Code': ['photo-1516259762381-22954d7d3ad2', 'photo-1461749280684-dccba630e2f6', 'photo-1517694712202-14dd9538aa97'],
+  TypeScript: ['photo-1555066931-4365d14bab8c', 'photo-1526374965328-7f61d4dc18c5', 'photo-1507238691740-187a5b1d37b8'],
+  Docker: ['photo-1605745341112-85968b19335b', 'photo-1586528116311-ad8dd3c8310d', 'photo-1525547719571-a2d4ac8945e2'],
+  Testing: ['photo-1504639725590-34d0984388bd', 'photo-1518770660439-4636190af475', 'photo-1451187580459-43490279c0fa'],
+  Database: ['photo-1544383835-bda2bc66a55d', 'photo-1563986768609-322da13575f3', 'photo-1542831371-29b0f74f9713']
+};
+const getImg = (dom, i = 0) => `https://images.unsplash.com/${(T_IMG[dom] || T_IMG.Microservices)[i % (T_IMG[dom] || T_IMG.Microservices).length]}?auto=format&fit=crop&w=1200&q=80`;
+
+const a = (id, title, slug, domain, status, author, views = 1200, imgUrl) => ({
   _id: id, title, slug, domain, status, shortDescription: `${title} - practical engineering guide for ${domain}.`,
-  authorId: { name: author, email: `${author.toLowerCase().replace(/\s+/g, '.')}@devsphere.com` }, viewsCount: views, featuredImage: img,
-  createdAt: new Date()
+  authorId: { name: author, email: `${author.toLowerCase().replace(/\s+/g, '.')}@devsphere.com` }, viewsCount: views,
+  featuredImage: imgUrl || getImg(domain, 0), createdAt: new Date()
 });
 
 const pub = [
@@ -68,7 +77,7 @@ const dra = [
 ];
 
 export const FALLBACK_ADMIN_ARTICLES = [
-  ...pub.map(([id, t, s, d, auth, v]) => a(id, t, s, d, 'published', auth, v)),
-  ...pen.map(([id, t, s, d, auth]) => a(id, t, s, d, 'pending', auth, 0)),
-  ...dra.map(([id, t, s, d, auth]) => a(id, t, s, d, 'draft', auth, 0))
+  ...pub.map(([id, t, s, d, auth, v], i) => a(id, t, s, d, 'published', auth, v, getImg(d, i % 3))),
+  ...pen.map(([id, t, s, d, auth], i) => a(id, t, s, d, 'pending', auth, 0, getImg(d, i))),
+  ...dra.map(([id, t, s, d, auth], i) => a(id, t, s, d, 'draft', auth, 0, getImg(d, i)))
 ];

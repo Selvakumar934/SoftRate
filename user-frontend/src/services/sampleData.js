@@ -1,8 +1,22 @@
 export const SAMPLE_CATEGORIES = [{ _id: 'cat-1', name: 'Software Development', slug: 'software-development', description: 'Practical tutorials and architecture guides.' }];
 const bld = (t, d, desc) => `## ${t}\n${desc}\n\n### 1. Architectural Foundations of ${d}\nAdopting rigorous patterns is essential for scalable systems.\n\n### 2. Production Code Implementation\n\`\`\`javascript\nexport async function executeOperation(payload) { return { success: true }; }\n\`\`\`\n\n### 3. Best Practices\n- Zero-Downtime Resilience\n- Telemetry & Tracing`;
-const img = 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80';
-const mk = (id, title, slug, desc, domain, author, st = 'published', v = 1400) => ({
-  _id: id, title, slug, shortDescription: desc, domain, fullContent: bld(title, domain, desc), featuredImage: img,
+
+const T_IMG = {
+  Microservices: ['photo-1558494949-ef010cbdcc31', 'photo-1544197150-b99a580bb7a8', 'photo-1551288049-bebda4e38f71'],
+  'Clean Code': ['photo-1516259762381-22954d7d3ad2', 'photo-1461749280684-dccba630e2f6', 'photo-1517694712202-14dd9538aa97'],
+  TypeScript: ['photo-1555066931-4365d14bab8c', 'photo-1526374965328-7f61d4dc18c5', 'photo-1507238691740-187a5b1d37b8'],
+  Docker: ['photo-1605745341112-85968b19335b', 'photo-1586528116311-ad8dd3c8310d', 'photo-1525547719571-a2d4ac8945e2'],
+  Testing: ['photo-1504639725590-34d0984388bd', 'photo-1518770660439-4636190af475', 'photo-1451187580459-43490279c0fa'],
+  Database: ['photo-1544383835-bda2bc66a55d', 'photo-1563986768609-322da13575f3', 'photo-1542831371-29b0f74f9713'],
+  Architecture: ['photo-1629654297299-c8506221ca97', 'photo-1515879218367-8466d910aaa4'],
+  Security: ['photo-1563089145-599997674d42', 'photo-1510511459019-5dda7724fd87'],
+  DevOps: ['photo-1618401471353-b98afee0b2eb', 'photo-1667372393119-3d4c48d07fc9'],
+  Frontend: ['photo-1633356122544-f134324a6cee', 'photo-1507238691740-187a5b1d37b8']
+};
+const getImg = (dom, i = 0) => `https://images.unsplash.com/${(T_IMG[dom] || T_IMG.Microservices)[i % (T_IMG[dom] || T_IMG.Microservices).length]}?auto=format&fit=crop&w=1200&q=80`;
+
+const mk = (id, title, slug, desc, domain, author, st = 'published', v = 1400, imgUrl) => ({
+  _id: id, title, slug, shortDescription: desc, domain, fullContent: bld(title, domain, desc), featuredImage: imgUrl,
   categoryId: SAMPLE_CATEGORIES[0], authorId: { _id: `u-${id}`, name: author, email: `${author.toLowerCase().replace(/\s+/g, '.')}@devsphere.com`, websiteUrl: 'https://github.com', socialMediaId: `@${author.toLowerCase().replace(/\s+/g, '_')}` },
   publishedDate: new Date(), readingTimeMinutes: 5, viewsCount: v, featuredStatus: id === 'art-1', status: st, createdAt: new Date(), updatedAt: new Date()
 });
@@ -54,11 +68,11 @@ const dra = [
   ['art-d-10', 'Automating Code Quality with ESLint and SonarQube in CI Pipelines', 'automating-code-quality-with-eslint-and-sonarqube-in-ci-pipelines', 'Static code analysis.', 'Clean Code', 'Neha Gupta']
 ];
 
-export const SAMPLE_ARTICLES = pub.map(([id, t, s, desc, d, auth, v]) => mk(id, t, s, desc, d, auth, 'published', v));
+export const SAMPLE_ARTICLES = pub.map(([id, t, s, desc, d, auth, v], i) => mk(id, t, s, desc, d, auth, 'published', v, getImg(d, i % 3)));
 export const SAMPLE_ADMIN_ARTICLES = [
   ...SAMPLE_ARTICLES,
-  ...pen.map(([id, t, s, desc, d, auth]) => mk(id, t, s, desc, d, auth, 'pending', 0)),
-  ...dra.map(([id, t, s, desc, d, auth]) => mk(id, t, s, desc, d, auth, 'draft', 0))
+  ...pen.map(([id, t, s, desc, d, auth], i) => mk(id, t, s, desc, d, auth, 'pending', 0, getImg(d, i))),
+  ...dra.map(([id, t, s, desc, d, auth], i) => mk(id, t, s, desc, d, auth, 'draft', 0, getImg(d, i)))
 ];
 export const SAMPLE_AUTHORS = [
   { _id: 'u-1', name: 'Aarav Sharma', email: 'aarav.sharma@devsphere.com', role: 'user', websiteUrl: 'https://github.com/aaravsharma-dev', socialMediaId: '@aarav_codes' },
