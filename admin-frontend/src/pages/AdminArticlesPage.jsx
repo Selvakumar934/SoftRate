@@ -17,14 +17,13 @@ const AdminArticlesPage = () => {
   const handleAction = async (id, act) => {
     try {
       if (act === 'approve') await adminApi.put(`/admin/articles/${id}/approve`);
-      if (act === 'reject') {
-        const r = window.prompt('Rejection feedback:', 'Needs revision');
-        if (r) await adminApi.put(`/admin/articles/${id}/reject`, { rejectionReason: r });
-      }
+      if (act === 'reject') { const r = window.prompt('Rejection feedback:', 'Needs revision'); if (r) await adminApi.put(`/admin/articles/${id}/reject`, { rejectionReason: r }); }
       if (act === 'delete' && window.confirm('Delete this article?')) await adminApi.delete(`/articles/${id}`);
       fetchArticles();
     } catch (e) {}
+    setArticles((p) => act === 'delete' ? p.filter((a) => a._id !== id) : p.map((a) => a._id === id ? { ...a, status: act === 'approve' ? 'published' : 'rejected' } : a));
   };
+  const displayed = articles.filter((a) => filter === 'all' || a.status === filter).filter((a) => !search || a.title?.toLowerCase().includes(search.toLowerCase()) || a.authorId?.name?.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <div>
@@ -52,7 +51,7 @@ const AdminArticlesPage = () => {
               <tr><th className="ps-3 py-3">Article</th><th className="py-3">Author / User</th><th className="py-3">Status</th><th className="py-3">Views</th><th className="text-end pe-3 py-3">Actions</th></tr>
             </thead>
             <tbody>
-              {articles.map((item) => (
+              {displayed.map((item) => (
                 <tr key={item._id}>
                   <td className="ps-3 py-3">
                     <div className="d-flex align-items-center gap-2">

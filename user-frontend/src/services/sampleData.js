@@ -1,73 +1,74 @@
-export const SAMPLE_CATEGORIES = [{
-  _id: 'cat-1',
-  name: 'Software Development',
-  slug: 'software-development',
-  description: 'Practical tutorials, clean code patterns, system architecture, and software engineering.'
-}];
-
-const buildContent = (title, domain, desc) => `## ${title}
-${desc}
-
-### 1. Architectural Foundations of ${domain}
-In modern software engineering, adopting rigorous **${domain.toLowerCase()}** patterns is essential for building scalable, fault-tolerant, and maintainable systems. Decoupling high-throughput pipelines from underlying storage models ensures that independent services can scale horizontally without causing cascading failures.
-
-### 2. Production Code Implementation
-\`\`\`javascript
-// Production-ready resilient service pattern for ${domain}
-export async function executeOperation(payload, options = {}) {
-  const timeoutMs = options.timeoutMs || 4000;
-  const correlationId = options.traceId || crypto.randomUUID();
-  try {
-    const outcome = await Promise.race([processDomainWorkflow(payload), new Promise((_, reject) => setTimeout(() => reject(new Error('Operation timeout')), timeoutMs))]);
-    return { success: true, correlationId, data: outcome, timestamp: new Date().toISOString() };
-  } catch (error) {
-    console.error(\`[\${correlationId}] Execution failed: \${error.message}\`);
-    throw error;
-  }
-}
-\`\`\`
-
-### 3. Engineering Best Practices & Trade-Offs
-- **Zero-Downtime Resilience**: Deploy with automated health probes and circuit breakers.
-- **Contract Enforcement**: Enforce strict schema boundaries using TypeScript or Protobuf specifications.
-- **Telemetry & Tracing**: Propagate distributed trace IDs across all asynchronous event hops.`;
-
-const mk = (id, title, slug, desc, domain, author, date, img, readTime = 5, views = 1400) => ({
-  _id: id,
-  title,
-  slug,
-  shortDescription: desc,
-  domain,
-  fullContent: buildContent(title, domain, desc),
-  featuredImage: img,
-  categoryId: SAMPLE_CATEGORIES[0],
-  authorId: { _id: 'u-1', name: author, avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80', bio: 'Senior Software Engineer' },
-  publishedDate: new Date(date),
-  readingTimeMinutes: readTime,
-  viewsCount: views,
-  featuredStatus: id === 'art-1',
-  status: 'published',
-  createdAt: new Date(date),
-  updatedAt: new Date(date)
+export const SAMPLE_CATEGORIES = [{ _id: 'cat-1', name: 'Software Development', slug: 'software-development', description: 'Practical tutorials and architecture guides.' }];
+const bld = (t, d, desc) => `## ${t}\n${desc}\n\n### 1. Architectural Foundations of ${d}\nAdopting rigorous patterns is essential for scalable systems.\n\n### 2. Production Code Implementation\n\`\`\`javascript\nexport async function executeOperation(payload) { return { success: true }; }\n\`\`\`\n\n### 3. Best Practices\n- Zero-Downtime Resilience\n- Telemetry & Tracing`;
+const img = 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80';
+const mk = (id, title, slug, desc, domain, author, st = 'published', v = 1400) => ({
+  _id: id, title, slug, shortDescription: desc, domain, fullContent: bld(title, domain, desc), featuredImage: img,
+  categoryId: SAMPLE_CATEGORIES[0], authorId: { _id: `u-${id}`, name: author, email: `${author.toLowerCase().replace(/\s+/g, '.')}@devsphere.com`, websiteUrl: 'https://github.com', socialMediaId: `@${author.toLowerCase().replace(/\s+/g, '_')}` },
+  publishedDate: new Date(), readingTimeMinutes: 5, viewsCount: v, featuredStatus: id === 'art-1', status: st, createdAt: new Date(), updatedAt: new Date()
 });
 
-export const SAMPLE_ARTICLES = [
-  mk('art-1', 'Architecting Scalable Microservices with Node.js', 'architecting-scalable-microservices-with-nodejs', 'Proven architectural patterns for designing resilient, decoupled services with replica sets.', 'Microservices', 'Aarav Sharma', '2026-11-12T08:00:00Z', 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80', 5, 1420),
-  mk('art-2', 'Event-Driven Microservices Architecture with Apache Kafka', 'event-driven-microservices-architecture-with-apache-kafka', 'Designing decoupled asynchronous event streams with Kafka brokers, consumers, and idempotency.', 'Microservices', 'Priya Patel', '2026-11-11T10:00:00Z', 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1200&q=80', 6, 1820),
-  mk('art-3', 'API Gateway Patterns in Distributed Microservices Ecosystems', 'api-gateway-patterns-in-distributed-microservices-ecosystems', 'Centralizing authentication, rate limiting, and request routing across distributed backend services.', 'Microservices', 'Rohan Verma', '2026-11-10T12:00:00Z', 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80', 4, 2150),
-  mk('art-4', 'Clean Code Principles Every Beginner Developer Should Know', 'clean-code-principles-every-beginner-developer-should-know', 'Write code that humans can understand: DRY, KISS, meaningful variable naming, and single-purpose functions.', 'Clean Code', 'Neha Gupta', '2026-11-10T09:00:00Z', 'https://images.unsplash.com/photo-1516259762381-22954d7d3ad2?auto=format&fit=crop&w=1200&q=80', 4, 2310),
-  mk('art-5', 'Refactoring Legacy Codebases with Clean Code Practices', 'refactoring-legacy-codebases-with-clean-code-practices', 'Transform brittle legacy spaghetti code into maintainable, elegant modules with safe iterative refactoring.', 'Clean Code', 'Aarav Sharma', '2026-11-09T14:00:00Z', 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1200&q=80', 5, 1670),
-  mk('art-6', 'Mastering SOLID Design Principles for Clean Code Architecture', 'mastering-solid-design-principles-for-clean-code-architecture', 'A developer guide to Single Responsibility, Open-Closed, Liskov, Interface Segregation, and Dependency Inversion.', 'Clean Code', 'DevSphere Administrator', '2026-11-08T11:00:00Z', 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1200&q=80', 6, 2940),
-  mk('art-7', 'Advanced TypeScript Generics and Conditional Types Explained', 'advanced-typescript-generics-and-conditional-types-explained', 'Harness type inference, mapped types, and conditional constraints to write type-safe flexible libraries.', 'TypeScript', 'Priya Patel', '2026-11-07T16:00:00Z', 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80', 5, 1980),
-  mk('art-8', 'Strict TypeScript Configuration Guide for Production Apps', 'strict-typescript-configuration-guide-for-production-apps', 'Optimizing tsconfig compiler flags with strictNullChecks, noImplicitAny, and isolatedModules for robust builds.', 'TypeScript', 'Aarav Sharma', '2026-11-06T13:00:00Z', 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80', 4, 1450),
-  mk('art-9', 'Design Patterns: Implementing the Observer Pattern in TypeScript', 'design-patterns-implementing-the-observer-pattern-in-typescript', 'A practical deep dive into behavioral design patterns with a complete type-safe EventEmitter implementation.', 'TypeScript', 'Priya Patel', '2026-11-05T15:00:00Z', 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80', 5, 2200),
-  mk('art-10', 'Mastering Docker Containers for Full-Stack Applications', 'mastering-docker-containers-for-full-stack-applications', 'Step-by-step guide to containerizing web backends and frontends with high-efficiency multi-stage builds.', 'Docker', 'Ananya Iyer', '2026-11-04T10:00:00Z', 'https://images.unsplash.com/photo-1605745341112-85968b19335b?auto=format&fit=crop&w=1200&q=80', 5, 3120),
-  mk('art-11', 'Optimizing Docker Image Size with Multi-Stage Alpine Builds', 'optimizing-docker-image-size-with-multi-stage-alpine-builds', 'Shrink container images from 1GB to under 80MB using distroless images, caching layers, and minimal baselines.', 'Docker', 'Vikram Malhotra', '2026-11-03T09:00:00Z', 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1200&q=80', 4, 1780),
-  mk('art-12', 'Docker Compose for Multi-Container Local Development Environments', 'docker-compose-for-multi-container-local-development-environments', 'Orchestrate interconnected backend services, caches, and persistent volumes in isolated dev networks.', 'Docker', 'DevSphere Administrator', '2026-11-02T11:00:00Z', 'https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?auto=format&fit=crop&w=1200&q=80', 5, 2650),
-  mk('art-13', 'Test-Driven Development (TDD) with Modern Testing Frameworks', 'test-driven-development-tdd-with-modern-testing-frameworks', 'Write robust test suites first to produce bulletproof component logic and eliminate regression bugs.', 'Testing', 'DevSphere Administrator', '2026-11-01T14:00:00Z', 'https://images.unsplash.com/photo-1504639725590-34d0984388bd?auto=format&fit=crop&w=1200&q=80', 4, 1890),
-  mk('art-14', 'End-to-End Automation Testing Strategies with Playwright', 'end-to-end-automation-testing-strategies-with-playwright', 'Automate realistic cross-browser user flows, flaky test handling, and visual regression testing in CI.', 'Testing', 'Neha Gupta', '2026-10-31T08:00:00Z', 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80', 5, 2100),
-  mk('art-15', 'Integration Testing Best Practices for REST and GraphQL APIs', 'integration-testing-best-practices-for-rest-and-graphql-apis', 'Mock external dependencies, assert HTTP contracts, and validate server state with automated integration suites.', 'Testing', 'Aarav Sharma', '2026-10-30T10:00:00Z', 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80', 4, 1640),
-  mk('art-16', 'Demystifying SQL vs NoSQL: Choosing the Right Database for Your App', 'demystifying-sql-vs-nosql-choosing-the-right-database-for-your-app', 'Comprehensive comparison between relational schemas and document stores with real-world workloads.', 'Database', 'Rohan Verma', '2026-10-29T12:00:00Z', 'https://images.unsplash.com/photo-1544383835-bda2bc66a55d?auto=format&fit=crop&w=1200&q=80', 5, 2780),
-  mk('art-17', 'Database Indexing Strategies for High-Performance Queries', 'database-indexing-strategies-for-high-performance-queries', 'Understand B-Tree indexes, compound indexes, explain plans, and query bottlenecks to accelerate lookups.', 'Database', 'Rohan Verma', '2026-10-28T16:00:00Z', 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=1200&q=80', 5, 1950),
-  mk('art-18', 'Managing Database Migrations and ACID Transactions in Production', 'managing-database-migrations-and-acid-transactions-in-production', 'Execute zero-downtime schema migrations, manage distributed transactions, and prevent deadlocks.', 'Database', 'Priya Patel', '2026-10-27T09:00:00Z', 'https://images.unsplash.com/photo-1542831371-29b0f74f9713?auto=format&fit=crop&w=1200&q=80', 6, 2410)
+const pub = [
+  ['art-1', 'Architecting Scalable Microservices with Node.js', 'architecting-scalable-microservices-with-nodejs', 'Resilient decoupled services.', 'Microservices', 'Aarav Sharma', 1420],
+  ['art-2', 'Event-Driven Microservices Architecture with Apache Kafka', 'event-driven-microservices-architecture-with-apache-kafka', 'Decoupled event streams.', 'Microservices', 'Priya Patel', 1820],
+  ['art-3', 'API Gateway Patterns in Distributed Microservices Ecosystems', 'api-gateway-patterns-in-distributed-microservices-ecosystems', 'Centralized routing & auth.', 'Microservices', 'Rohan Verma', 2150],
+  ['art-4', 'Clean Code Principles Every Beginner Developer Should Know', 'clean-code-principles-every-beginner-developer-should-know', 'DRY, KISS, and meaningful names.', 'Clean Code', 'Neha Gupta', 2310],
+  ['art-5', 'Refactoring Legacy Codebases with Clean Code Practices', 'refactoring-legacy-codebases-with-clean-code-practices', 'Safe iterative refactoring.', 'Clean Code', 'Aarav Sharma', 1670],
+  ['art-6', 'Mastering SOLID Design Principles for Clean Code Architecture', 'mastering-solid-design-principles-for-clean-code-architecture', 'SOLID engineering guide.', 'Clean Code', 'DevSphere Administrator', 2940],
+  ['art-7', 'Advanced TypeScript Generics and Conditional Types Explained', 'advanced-typescript-generics-and-conditional-types-explained', 'Type-safe flexible libraries.', 'TypeScript', 'Priya Patel', 1980],
+  ['art-8', 'Strict TypeScript Configuration Guide for Production Apps', 'strict-typescript-configuration-guide-for-production-apps', 'Optimizing compiler flags.', 'TypeScript', 'Aarav Sharma', 1450],
+  ['art-9', 'Design Patterns: Implementing the Observer Pattern in TypeScript', 'design-patterns-implementing-the-observer-pattern-in-typescript', 'Type-safe EventEmitter.', 'TypeScript', 'Priya Patel', 2200],
+  ['art-10', 'Mastering Docker Containers for Full-Stack Applications', 'mastering-docker-containers-for-full-stack-applications', 'Multi-stage container builds.', 'Docker', 'Ananya Iyer', 3120],
+  ['art-11', 'Optimizing Docker Image Size with Multi-Stage Alpine Builds', 'optimizing-docker-image-size-with-multi-stage-alpine-builds', 'Distroless & minimal baselines.', 'Docker', 'Vikram Malhotra', 1780],
+  ['art-12', 'Docker Compose for Multi-Container Local Development Environments', 'docker-compose-for-multi-container-local-development-environments', 'Orchestrate interconnected devs.', 'Docker', 'DevSphere Administrator', 2650],
+  ['art-13', 'Test-Driven Development (TDD) with Modern Testing Frameworks', 'test-driven-development-tdd-with-modern-testing-frameworks', 'Bulletproof component testing.', 'Testing', 'DevSphere Administrator', 1890],
+  ['art-14', 'End-to-End Automation Testing Strategies with Playwright', 'end-to-end-automation-testing-strategies-with-playwright', 'Automate cross-browser flows.', 'Testing', 'Neha Gupta', 2100],
+  ['art-15', 'Integration Testing Best Practices for REST and GraphQL APIs', 'integration-testing-best-practices-for-rest-and-graphql-apis', 'Mock and assert HTTP contracts.', 'Testing', 'Aarav Sharma', 1640],
+  ['art-16', 'Demystifying SQL vs NoSQL: Choosing the Right Database for Your App', 'demystifying-sql-vs-nosql-choosing-the-right-database-for-your-app', 'Relational vs document stores.', 'Database', 'Rohan Verma', 2780],
+  ['art-17', 'Database Indexing Strategies for High-Performance Queries', 'database-indexing-strategies-for-high-performance-queries', 'Compound indexes & explain plans.', 'Database', 'Rohan Verma', 1950],
+  ['art-18', 'Managing Database Migrations and ACID Transactions in Production', 'managing-database-migrations-and-acid-transactions-in-production', 'Zero-downtime migrations.', 'Database', 'Priya Patel', 2410]
+];
+
+const pen = [
+  ['art-p-1', 'Deep Dive into Linux Kernel System Calls for Web Developers', 'deep-dive-into-linux-kernel-system-calls-for-web-developers', 'epoll & non-blocking IO.', 'Architecture', 'Aarav Sharma'],
+  ['art-p-2', 'Web Security Hardening: Securing Microservices from XSS and CSRF', 'web-security-hardening-securing-microservices-from-xss-and-csrf', 'Security strategies for APIs.', 'Security', 'Vikram Malhotra'],
+  ['art-p-3', 'Git and GitHub Workflow: A Step-by-Step Production Guide', 'git-and-github-workflow-step-by-step-production-guide', 'Branching & pull requests.', 'DevOps', 'Ananya Iyer'],
+  ['art-p-4', 'Building High-Throughput Caching with Redis In-Memory Store', 'building-high-throughput-caching-with-redis-in-memory-store', 'TTL and eviction policies.', 'Architecture', 'DevSphere Administrator'],
+  ['art-p-5', 'GraphQL Schema Federation: Composing Distributed Subgraphs', 'graphql-schema-federation-composing-distributed-subgraphs', 'Unifying multiple domains.', 'Architecture', 'Aarav Sharma'],
+  ['art-p-6', 'Kubernetes Custom Resource Definitions (CRDs) and Operator Pattern', 'kubernetes-custom-resource-definitions-crds-and-operator-pattern', 'Declarative K8s controllers.', 'DevOps', 'Ananya Iyer'],
+  ['art-p-7', 'Rust Memory Safety and Concurrency Models for High-Scale Backend Systems', 'rust-memory-safety-and-concurrency-models-for-high-scale-backend-systems', 'Zero-cost abstractions.', 'Architecture', 'Rohan Verma'],
+  ['art-p-8', 'Implementing Distributed Locks and Rate Limiting with Redis Redlock', 'implementing-distributed-locks-and-rate-limiting-with-redis-redlock', 'Race-condition-free locks.', 'Database', 'Rohan Verma'],
+  ['art-p-9', 'Defensive API Design: Zero-Trust Input Validation with Zod and TypeScript', 'defensive-api-design-zero-trust-input-validation-with-zod-and-typescript', 'Strict schema boundaries.', 'TypeScript', 'Priya Patel'],
+  ['art-p-10', 'Architecting Multi-Tenant Microservices with Tenant Isolation', 'architecting-multi-tenant-microservices-with-tenant-isolation', 'Schema-per-tenant isolation.', 'Microservices', 'Aarav Sharma']
+];
+
+const dra = [
+  ['art-d-1', 'Distributed Tracing and Observability with OpenTelemetry', 'distributed-tracing-and-observability-with-opentelemetry', 'Correlating distributed requests.', 'DevOps', 'Aarav Sharma'],
+  ['art-d-2', 'Optimizing React 19 Compiler Performance in High-Frequency UIs', 'optimizing-react-19-compiler-performance-in-high-frequency-uis', 'React memoization pipeline.', 'Frontend', 'Priya Patel'],
+  ['art-d-3', 'Zero-Trust Network Access for Engineering Infrastructure', 'zero-trust-network-access-for-engineering-infrastructure', 'Identity-aware proxies.', 'Security', 'Vikram Malhotra'],
+  ['art-d-4', 'WebAssembly (WASM) in Production: Blazing Fast Client-Side Compute', 'webassembly-wasm-in-production-blazing-fast-client-side-compute', 'C++/Rust in-browser compute.', 'Frontend', 'Aarav Sharma'],
+  ['art-d-5', 'Continuous Integration Security: Hardening GitHub Actions CI/CD Pipelines', 'continuous-integration-security-hardening-github-actions-cicd-pipelines', 'Hardening CI/CD pipelines.', 'DevOps', 'Ananya Iyer'],
+  ['art-d-6', 'Demystifying Database Sharding and Consistent Hashing in Distributed Systems', 'demystifying-database-sharding-and-consistent-hashing-in-distributed-systems', 'Horizontal sharding.', 'Database', 'Rohan Verma'],
+  ['art-d-7', 'Automating Performance Benchmarking with k6 and Grafana Dashboards', 'automating-performance-benchmarking-with-k6-and-grafana-dashboards', 'Stress testing microservices.', 'Testing', 'Neha Gupta'],
+  ['art-d-8', 'Event Sourcing with CQRS: Practical Implementation Patterns', 'event-sourcing-with-cqrs-practical-implementation-patterns', 'Append-only immutable events.', 'Architecture', 'Aarav Sharma'],
+  ['art-d-9', 'Resilient Sagas with Temporal Workflows in Microservices', 'resilient-sagas-with-temporal-workflows-in-microservices', 'Distributed transactions.', 'Microservices', 'Aarav Sharma'],
+  ['art-d-10', 'Automating Code Quality with ESLint and SonarQube in CI Pipelines', 'automating-code-quality-with-eslint-and-sonarqube-in-ci-pipelines', 'Static code analysis.', 'Clean Code', 'Neha Gupta']
+];
+
+export const SAMPLE_ARTICLES = pub.map(([id, t, s, desc, d, auth, v]) => mk(id, t, s, desc, d, auth, 'published', v));
+export const SAMPLE_ADMIN_ARTICLES = [
+  ...SAMPLE_ARTICLES,
+  ...pen.map(([id, t, s, desc, d, auth]) => mk(id, t, s, desc, d, auth, 'pending', 0)),
+  ...dra.map(([id, t, s, desc, d, auth]) => mk(id, t, s, desc, d, auth, 'draft', 0))
+];
+export const SAMPLE_AUTHORS = [
+  { _id: 'u-1', name: 'Aarav Sharma', email: 'aarav.sharma@devsphere.com', role: 'user', websiteUrl: 'https://github.com/aaravsharma-dev', socialMediaId: '@aarav_codes' },
+  { _id: 'u-2', name: 'Priya Patel', email: 'priya.patel@devsphere.com', role: 'user', websiteUrl: 'https://priyapatel.tech', socialMediaId: '@priya_patel_io' },
+  { _id: 'u-3', name: 'Rohan Verma', email: 'rohan.verma@devsphere.com', role: 'user', websiteUrl: 'https://github.com/rohanverma-eng', socialMediaId: '@rohanv_arch' },
+  { _id: 'u-4', name: 'Ananya Iyer', email: 'ananya.iyer@devsphere.com', role: 'user', websiteUrl: 'https://ananyaiyer.dev', socialMediaId: '@ananya_systems' },
+  { _id: 'u-5', name: 'Vikram Malhotra', email: 'vikram.malhotra@devsphere.com', role: 'user', websiteUrl: 'https://vikrammalhotra.io', socialMediaId: '@vikram_devops' },
+  { _id: 'u-6', name: 'Neha Gupta', email: 'neha.gupta@devsphere.com', role: 'user', websiteUrl: 'https://github.com/nehagupta-cloud', socialMediaId: '@neha_cloud_eng' },
+  { _id: 'u-7', name: 'Karthik Raman', email: 'karthik.raman@devsphere.com', role: 'user', websiteUrl: 'https://karthikraman.dev', socialMediaId: '@karthik_scale' },
+  { _id: 'u-8', name: 'Divya Nair', email: 'divya.nair@devsphere.com', role: 'user', websiteUrl: 'https://divyanair.tech', socialMediaId: '@divya_nair_dev' },
+  { _id: 'u-9', name: 'Siddharth Rao', email: 'siddharth.rao@devsphere.com', role: 'user', websiteUrl: 'https://github.com/siddharth-rao', socialMediaId: '@siddharth_sys' },
+  { _id: 'u-10', name: 'Pooja Kulkarni', email: 'pooja.kulkarni@devsphere.com', role: 'user', websiteUrl: 'https://poojakulkarni.io', socialMediaId: '@pooja_backend' }
 ];

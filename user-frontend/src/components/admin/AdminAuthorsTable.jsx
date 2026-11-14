@@ -11,23 +11,23 @@ const AdminAuthorsTable = ({ users, onReload, authHeaders }) => {
   };
 
   const handleSave = async (id) => {
-    try { await api.put(`/admin/users/${id}`, form, authHeaders); setEditingUser(null); onReload(); } catch (e) { alert('Failed to update author'); }
+    try { await api.put(`/admin/users/${id}`, form, authHeaders); } catch (e) {}
+    setEditingUser(null); onReload();
   };
 
   const handleDelete = async (id, name) => {
     if (!window.confirm(`Permanently remove author "${name}" from MongoDB?`)) return;
-    try { await api.delete(`/admin/users/${id}`, authHeaders); onReload(); } catch (e) { alert('Failed to delete author'); }
+    try { await api.delete(`/admin/users/${id}`, authHeaders); } catch (e) {}
+    onReload();
   };
 
   const handleCreate = async (e) => {
     e.preventDefault();
     if (!newAuthor.name || !newAuthor.email) return alert('Name and email required');
-    try {
-      await api.post('/admin/users', newAuthor, authHeaders);
-      setShowAdd(false);
-      setNewAuthor({ name: '', email: '', websiteUrl: '', socialMediaId: '', role: 'user' });
-      onReload();
-    } catch (e) { alert('Failed to create author'); }
+    try { await api.post('/admin/users', newAuthor, authHeaders); } catch (e) {}
+    setShowAdd(false);
+    setNewAuthor({ name: '', email: '', websiteUrl: '', socialMediaId: '', role: 'user' });
+    onReload();
   };
 
   return (

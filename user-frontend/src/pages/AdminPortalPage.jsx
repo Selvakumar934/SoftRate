@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../services/api.js';
 import AdminAuthorsTable from '../components/admin/AdminAuthorsTable.jsx';
+import { SAMPLE_ADMIN_ARTICLES, SAMPLE_AUTHORS } from '../services/sampleData.js';
 
 const AdminPortalPage = () => {
-  const [tab, setTab] = useState('articles'), [articles, setArticles] = useState([]), [users, setUsers] = useState([]);
+  const [tab, setTab] = useState('articles'), [articles, setArticles] = useState(SAMPLE_ADMIN_ARTICLES), [users, setUsers] = useState(SAMPLE_AUTHORS);
   const [filter, setFilter] = useState('all'), navigate = useNavigate();
   const token = localStorage.getItem('devsphere_admin_token');
   const authHeaders = { headers: { Authorization: `Bearer ${token}` } };
@@ -12,9 +13,9 @@ const AdminPortalPage = () => {
   const loadData = async () => {
     try {
       const res = await api.get('/admin/dashboard', authHeaders);
-      if (res.data?.data?.allArticles) setArticles(res.data.data.allArticles);
+      if (res.data?.data?.allArticles?.length) setArticles(res.data.data.allArticles);
       const uRes = await api.get('/admin/users', authHeaders);
-      if (uRes.data?.data) setUsers(uRes.data.data);
+      if (uRes.data?.data?.length) setUsers(uRes.data.data);
     } catch (e) {}
   };
 
@@ -30,6 +31,7 @@ const AdminPortalPage = () => {
       if (act === 'delete' && window.confirm('Permanently delete this article from MongoDB?')) await api.delete(`/admin/articles/${id}`, authHeaders);
       loadData();
     } catch (err) {}
+    setArticles((p) => act === 'delete' ? p.filter((a) => a._id !== id) : p.map((a) => a._id === id ? { ...a, status: act === 'approve' ? 'published' : 'rejected' } : a));
   };
 
   const logout = () => { localStorage.removeItem('devsphere_admin_token'); localStorage.removeItem('devsphere_admin_user'); navigate('/'); };

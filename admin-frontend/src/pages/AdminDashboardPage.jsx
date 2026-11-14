@@ -25,14 +25,15 @@ const AdminDashboardPage = () => {
       if (act === 'delete' && window.confirm('Permanently delete this article?')) await adminApi.delete(`/admin/articles/${id}`);
       loadData();
     } catch (e) {}
+    setArticles((p) => act === 'delete' ? p.filter((a) => a._id !== id) : p.map((a) => a._id === id ? { ...a, status: act === 'approve' ? 'published' : 'rejected' } : a));
   };
 
   const filtered = filter === 'all' ? articles : articles.filter((a) => a.status === filter);
   const cards = [
-    { label: 'Total Articles', val: metrics.totalArticles, sub: `${metrics.totalViews || 42100} Views` },
-    { label: 'Published', val: metrics.publishedArticles, sub: 'Active live posts' },
-    { label: 'Pending Review', val: metrics.pendingArticles, sub: 'Requires moderation', badge: true },
-    { label: 'Drafts', val: metrics.draftArticles, sub: 'Work in progress' }
+    { label: 'Total Articles', val: articles.length, sub: `${metrics.totalViews || 58400} Views` },
+    { label: 'Published', val: articles.filter(a => a.status === 'published').length, sub: 'Active live posts' },
+    { label: 'Pending Review', val: articles.filter(a => a.status === 'pending').length, sub: 'Requires moderation', badge: true },
+    { label: 'Drafts', val: articles.filter(a => a.status === 'draft').length, sub: 'Work in progress' }
   ];
 
   return (

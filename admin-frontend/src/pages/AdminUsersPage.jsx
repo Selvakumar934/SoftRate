@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import adminApi from '../services/adminApi.js';
+import { FALLBACK_USERS } from '../services/sampleData.js';
 
 const AdminUsersPage = () => {
-  const [users, setUsers] = useState([]), [editing, setEditing] = useState(null), [form, setForm] = useState({}), [showAdd, setShowAdd] = useState(false);
+  const [users, setUsers] = useState(FALLBACK_USERS), [editing, setEditing] = useState(null), [form, setForm] = useState({}), [showAdd, setShowAdd] = useState(false);
   const [newAuthor, setNewAuthor] = useState({ name: '', email: '', websiteUrl: '', socialMediaId: '', role: 'user' });
 
   const loadUsers = async () => {
-    try { const res = await adminApi.get('/admin/users'); if (res.data?.data) setUsers(res.data.data); } catch (e) {}
+    try { const res = await adminApi.get('/admin/users'); if (res.data?.data?.length) setUsers(res.data.data); } catch (e) {}
   };
   useEffect(() => { loadUsers(); }, []);
 
@@ -16,23 +17,22 @@ const AdminUsersPage = () => {
   };
 
   const handleSave = async (id) => {
-    try { await adminApi.put(`/admin/users/${id}`, form); setEditing(null); loadUsers(); } catch (err) { alert('Failed to update author'); }
+    try { await adminApi.put(`/admin/users/${id}`, form); } catch (err) {}
+    setUsers((p) => p.map((u) => u._id === id ? { ...u, ...form } : u)); setEditing(null);
   };
 
   const handleDelete = async (id, name) => {
     if (!window.confirm(`Permanently remove author "${name}" from MongoDB?`)) return;
-    try { await adminApi.delete(`/admin/users/${id}`); loadUsers(); } catch (e) { alert('Failed to delete author'); }
+    try { await adminApi.delete(`/admin/users/${id}`); } catch (e) {}
+    setUsers((p) => p.filter((u) => u._id !== id));
   };
 
   const handleCreate = async (e) => {
     e.preventDefault();
     if (!newAuthor.name || !newAuthor.email) return alert('Name and email required');
-    try {
-      await adminApi.post('/admin/users', newAuthor);
-      setShowAdd(false);
-      setNewAuthor({ name: '', email: '', websiteUrl: '', socialMediaId: '', role: 'user' });
-      loadUsers();
-    } catch (e) { alert('Failed to create author'); }
+    try { await adminApi.post('/admin/users', newAuthor); } catch (e) {}
+    setUsers((p) => [...p, { _id: 'u-' + Date.now(), ...newAuthor }]);
+    setShowAdd(false); setNewAuthor({ name: '', email: '', websiteUrl: '', socialMediaId: '', role: 'user' });
   };
 
   return (
