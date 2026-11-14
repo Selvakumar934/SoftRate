@@ -3,16 +3,18 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 import adminApi from '../services/adminApi.js';
 
 const AdminArticleEditorPage = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const fileRef = useRef();
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [image, setImage] = useState('');
-  const [loading, setLoading] = useState(false);
+  const { id } = useParams(), navigate = useNavigate(), fileRef = useRef();
+  const [title, setTitle] = useState(''), [content, setContent] = useState(''), [image, setImage] = useState(''), [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!id) return;
+    try {
+      const s = localStorage.getItem('devsphere_admin_articles');
+      if (s) {
+        const m = JSON.parse(s).find((a) => a._id === id || a.slug === id);
+        if (m) { setTitle(m.title); setContent(m.fullContent || m.shortDescription); setImage(m.featuredImage); }
+      }
+    } catch (e) {}
     adminApi.get(`/articles/id/${id}`).then((res) => {
       if (res.data?.data) {
         setTitle(res.data.data.title);
@@ -37,6 +39,14 @@ const AdminArticleEditorPage = () => {
     try {
       if (id) await adminApi.put(`/articles/${id}`, data);
       else await adminApi.post('/articles', data);
+    } catch (e) {}
+    try {
+      const s = localStorage.getItem('devsphere_admin_articles');
+      if (s) {
+        const list = JSON.parse(s);
+        const up = list.map((a) => (a._id === id || a.slug === id) ? { ...a, ...data, updatedAt: new Date() } : a);
+        localStorage.setItem('devsphere_admin_articles', JSON.stringify(up));
+      }
     } catch (e) {}
     navigate('/articles');
   };

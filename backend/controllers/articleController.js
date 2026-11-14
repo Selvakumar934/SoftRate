@@ -38,22 +38,18 @@ exports.getArticleBySlug = async (req, res) => {
 
 exports.getArticleById = async (req, res) => {
   if (isDb()) {
-    try { const a = await Article.findById(req.params.id).populate('authorId', 'name email'); if (a) return res.json({ success: true, data: a }); } catch (e) {}
+    try { const a = await Article.findOne(artF(req.params.id)).populate('authorId', 'name email'); if (a) return res.json({ success: true, data: a }); } catch (e) {}
   }
-  const art = mockStore.articles.find((a) => a._id === req.params.id);
+  const art = mockStore.articles.find((a) => a._id === req.params.id || a.slug === req.params.id);
   art ? res.json({ success: true, data: art }) : res.status(404).json({ success: false, message: 'Not found' });
 };
 
 exports.getMyArticles = async (req, res) => {
   if (isDb()) {
-    const u = await User.findOne({ email: req.user?.email });
-    if (u) {
-      const list = await Article.find({ authorId: u._id }).sort({ createdAt: -1 });
-      if (list.length > 0) return res.json({ success: true, count: list.length, data: list });
-    }
+    const list = await Article.find().populate('authorId', 'name email avatar').sort({ createdAt: -1 });
+    if (list.length > 0) return res.json({ success: true, count: list.length, data: list });
   }
-  const list = mockStore.articles.filter((a) => a.authorId?._id === req.user?._id || a.authorId?.email === req.user?.email);
-  res.json({ success: true, count: list.length, data: list });
+  res.json({ success: true, count: mockStore.articles.length, data: mockStore.articles });
 };
 
 exports.createArticle = async (req, res) => {

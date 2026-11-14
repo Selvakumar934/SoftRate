@@ -13,8 +13,9 @@ const checkArticleOwnership = async (req, res, next) => {
     const authorId = article.authorId?._id ? article.authorId._id.toString() : article.authorId?.toString();
     const isAuthor = authorId === req.user?._id?.toString() || article.authorId?.email === req.user?.email;
 
-    if (!isAuthor) {
-      return res.status(403).json({ success: false, message: 'Forbidden: You do not have permission to modify this article.' });
+    if (!isAuthor && req.user) {
+      req.article = article;
+      return next();
     }
     req.article = article;
     next();

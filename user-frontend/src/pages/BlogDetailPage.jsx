@@ -15,15 +15,21 @@ const BlogDetailPage = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    let local = null;
+    try {
+      const s = localStorage.getItem('devsphere_admin_articles');
+      if (s) local = JSON.parse(s).find((a) => a.slug === slug || a._id === slug);
+    } catch (e) {}
+    if (local) setArticle(local);
     api.get(`/articles/slug/${slug}`).then((res) => {
-      if (res.data?.data) {
-        setArticle(res.data.data);
-        setRelated(res.data.related || []);
-      }
+      if (res.data?.data && !local) setArticle(res.data.data);
+      if (res.data?.related) setRelated(res.data.related);
     }).catch(() => {
-      const match = SAMPLE_ARTICLES.find((a) => a.slug === slug) || SAMPLE_ARTICLES[0];
-      setArticle(match);
-      setRelated(SAMPLE_ARTICLES.filter((a) => a.slug !== match.slug).slice(0, 3));
+      if (!local) {
+        const match = SAMPLE_ARTICLES.find((a) => a.slug === slug) || SAMPLE_ARTICLES[0];
+        setArticle(match);
+        setRelated(SAMPLE_ARTICLES.filter((a) => a.slug !== match.slug).slice(0, 3));
+      }
     });
   }, [slug]);
 

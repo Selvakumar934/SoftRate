@@ -6,9 +6,20 @@ import FeaturedHero from '../components/blog/FeaturedHero.jsx';
 import TechStacksBlock from '../components/blog/TechStacksBlock.jsx';
 import NewsletterBlock from '../components/blog/NewsletterBlock.jsx';
 
+const getInitialArticles = () => {
+  try {
+    const s = localStorage.getItem('devsphere_admin_articles');
+    if (s) {
+      const pub = JSON.parse(s).filter((a) => a.status === 'published');
+      if (pub.length) return pub;
+    }
+  } catch (e) {}
+  return SAMPLE_ARTICLES;
+};
+
 const HomePage = () => {
-  const [articles, setArticles] = useState(SAMPLE_ARTICLES);
-  const [featured, setFeatured] = useState(SAMPLE_ARTICLES[0]);
+  const [articles, setArticles] = useState(getInitialArticles);
+  const [featured, setFeatured] = useState(() => getInitialArticles()[0]);
   const [search, setSearch] = useState('');
   const navigate = useNavigate();
 
@@ -22,8 +33,9 @@ const HomePage = () => {
           return;
         }
       } catch (err) {}
-      setArticles(SAMPLE_ARTICLES);
-      setFeatured(SAMPLE_ARTICLES[0]);
+      const fallback = getInitialArticles();
+      setArticles(fallback);
+      setFeatured(fallback[0]);
     };
     loadData();
   }, []);

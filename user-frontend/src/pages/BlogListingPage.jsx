@@ -5,9 +5,14 @@ import { SAMPLE_ARTICLES } from '../services/sampleData.js';
 import ArticleCard from '../components/blog/ArticleCard.jsx';
 
 const filterSample = (q) => {
-  if (!q) return SAMPLE_ARTICLES;
+  let list = SAMPLE_ARTICLES;
+  try {
+    const s = localStorage.getItem('devsphere_admin_articles');
+    if (s) list = JSON.parse(s).filter((a) => a.status === 'published');
+  } catch (e) {}
+  if (!q) return list;
   const lq = q.toLowerCase();
-  return SAMPLE_ARTICLES.filter((a) => a.domain?.toLowerCase().includes(lq) || a.title?.toLowerCase().includes(lq) || a.shortDescription?.toLowerCase().includes(lq));
+  return list.filter((a) => a.domain?.toLowerCase().includes(lq) || a.title?.toLowerCase().includes(lq) || a.shortDescription?.toLowerCase().includes(lq));
 };
 
 const BlogListingPage = () => {
