@@ -3,21 +3,30 @@ import adminApi from '../services/adminApi.js';
 import { SAMPLE_REVIEWS } from '../services/sampleReviews.js';
 
 const AdminReviewsPage = () => {
-  const [reviews, setReviews] = useState(SAMPLE_REVIEWS), [filter, setFilter] = useState('all'), [search, setSearch] = useState('');
+  const [reviews, setReviews] = useState(() => {
+    try { const s = localStorage.getItem('devsphere_admin_reviews'); if (s) return JSON.parse(s); } catch (e) {}
+    return SAMPLE_REVIEWS;
+  });
+  const [filter, setFilter] = useState('all'), [search, setSearch] = useState('');
 
   const loadReviews = async () => {
     try {
       const res = await adminApi.get('/reviews');
-      if (res.data?.data?.length) setReviews(res.data.data);
+      if (res.data?.data?.length) {
+        setReviews(res.data.data);
+        localStorage.setItem('devsphere_admin_reviews', JSON.stringify(res.data.data));
+      }
     } catch (e) {}
   };
 
   useEffect(() => { loadReviews(); }, []);
 
-  const handleDelete = async (id, title) => {
-    if (!window.confirm(`Permanently remove review for "${title}"?`)) return;
-    try { await adminApi.delete(`/reviews/${id}`); } catch (e) {}
-    setReviews((p) => p.filter((r) => r._id !== id));
+  const handleDelete = async (r) => {
+    if (!window.confirm(`Permanently remove review for "${r.articleTitle || r.articleSlug}"?`)) return;
+    try { await adminApi.delete(`/reviews/${r._id}?slug=${encodeURIComponent(r.articleSlug || '')}&userName=${encodeURIComponent(r.userName || '')}`); } catch (e) {}
+    const updated = reviews.filter((item) => item._id !== r._id && !(item.articleSlug === r.articleSlug && item.userName === r.userName));
+    setReviews(updated);
+    try { localStorage.setItem('devsphere_admin_reviews', JSON.stringify(updated)); } catch (e) {}
   };
 
   const filtered = reviews.filter((r) => {
@@ -74,7 +83,7 @@ const AdminReviewsPage = () => {
                   <td><span className="badge bg-dark text-white">{'★'.repeat(r.rating || 5)}{'☆'.repeat(5 - (r.rating || 5))} {r.rating}/5</span></td>
                   <td className="text-dark py-2"><p className="mb-0 text-truncate" style={{ maxWidth: '340px' }} title={r.comment}>{r.comment}</p></td>
                   <td className="text-muted" style={{ whiteSpace: 'nowrap' }}>{new Date(r.createdAt || Date.now()).toLocaleDateString()}</td>
-                  <td className="text-end pe-3 py-2"><button onClick={() => handleDelete(r._id, r.articleTitle)} className="btn btn-outline-dark btn-sm">Delete</button></td>
+                  <td className="text-end pe-3 py-2"><button onClick={() => handleDelete(r)} className="btn btn-outline-dark btn-sm">Delete</button></td>
                 </tr>
               ))}
             </tbody>

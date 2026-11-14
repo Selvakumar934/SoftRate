@@ -74,12 +74,13 @@ exports.createReview = async (req, res) => {
 exports.deleteReview = async (req, res) => {
   try {
     const { id } = req.params;
+    const { slug, userName } = req.query;
     if (isDb()) {
-      await Review.findByIdAndDelete(id);
+      if (mongoose.isValidObjectId(id)) await Review.findByIdAndDelete(id);
+      else if (slug && userName) await Review.findOneAndDelete({ articleSlug: slug, userName });
+      else await Review.findOneAndDelete({ $or: [{ articleSlug: id }, { userName: id }] });
     }
-    if (mockStore.reviews) {
-      mockStore.reviews = mockStore.reviews.filter((r) => r._id !== id);
-    }
+    if (mockStore.reviews) mockStore.reviews = mockStore.reviews.filter((r) => r._id !== id && !(r.articleSlug === slug && r.userName === userName));
     res.json({ success: true, message: 'Review deleted successfully' });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });

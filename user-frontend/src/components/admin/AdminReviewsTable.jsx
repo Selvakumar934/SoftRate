@@ -5,10 +5,14 @@ const AdminReviewsTable = ({ reviews = [], onReload, authHeaders }) => {
   const [list, setList] = useState(reviews), [filter, setFilter] = useState('all'), [search, setSearch] = useState('');
   useEffect(() => { setList(reviews); }, [reviews]);
 
-  const handleDelete = async (id, title) => {
-    if (!window.confirm(`Permanently remove review for "${title}"?`)) return;
-    try { await api.delete(`/reviews/${id}`, authHeaders); } catch (e) {}
-    setList((p) => p.filter((r) => r._id !== id));
+  const handleDelete = async (r) => {
+    if (!window.confirm(`Permanently remove review for "${r.articleTitle || r.articleSlug}"?`)) return;
+    try {
+      await api.delete(`/reviews/${r._id}?slug=${encodeURIComponent(r.articleSlug || '')}&userName=${encodeURIComponent(r.userName || '')}`, authHeaders);
+    } catch (e) {}
+    const updated = list.filter((item) => item._id !== r._id && !(item.articleSlug === r.articleSlug && item.userName === r.userName));
+    setList(updated);
+    try { localStorage.setItem('devsphere_admin_reviews', JSON.stringify(updated)); } catch (e) {}
     onReload && onReload();
   };
 
@@ -64,7 +68,7 @@ const AdminReviewsTable = ({ reviews = [], onReload, authHeaders }) => {
                   <td><span className="badge bg-dark text-white">{'★'.repeat(r.rating || 5)}{'☆'.repeat(5 - (r.rating || 5))} {r.rating}/5</span></td>
                   <td className="text-dark py-2"><p className="mb-0 text-truncate" style={{ maxWidth: '340px' }} title={r.comment}>{r.comment}</p></td>
                   <td className="text-muted" style={{ whiteSpace: 'nowrap' }}>{new Date(r.createdAt || Date.now()).toLocaleDateString()}</td>
-                  <td className="text-end pe-3 py-2"><button onClick={() => handleDelete(r._id, r.articleTitle)} className="btn btn-outline-dark btn-sm">Delete</button></td>
+                  <td className="text-end pe-3 py-2"><button onClick={() => handleDelete(r)} className="btn btn-outline-dark btn-sm">Delete</button></td>
                 </tr>
               ))
             )}

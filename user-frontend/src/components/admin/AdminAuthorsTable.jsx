@@ -12,19 +12,26 @@ const AdminAuthorsTable = ({ users, onReload, authHeaders }) => {
     setForm({ name: u.name, email: u.email, websiteUrl: u.websiteUrl || '', socialMediaId: u.socialMediaId || '' });
   };
 
-  const handleSave = async (id) => {
-    try {
-      const res = await api.put(`/admin/users/${id}`, form, authHeaders);
-      if (res.data?.data) { setAuthorList((p) => p.map((u) => u._id === id ? res.data.data : u)); setEditingUser(null); onReload && onReload(); return; }
-    } catch (e) {}
-    setAuthorList((p) => p.map((u) => u._id === id ? { ...u, ...form } : u));
-    setEditingUser(null); onReload && onReload();
+  const syncList = (list) => {
+    setAuthorList(list);
+    try { localStorage.setItem('devsphere_admin_users', JSON.stringify(list)); } catch (e) {}
+    onReload && onReload();
   };
 
-  const handleDelete = async (id, name) => {
+  const handleSave = async (id) => {
+    let saved = { ...form };
+    try {
+      const res = await api.put(`/admin/users/${id}`, form, authHeaders);
+      if (res.data?.data) saved = res.data.data;
+    } catch (e) {}
+    syncList(authorList.map((u) => u._id === id ? { ...u, ...saved } : u));
+    setEditingUser(null);
+  };
+
+  const handleDelete = async (id, name, email) => {
     if (!window.confirm(`Permanently remove author "${name}" from MongoDB?`)) return;
-    try { await api.delete(`/admin/users/${id}`, authHeaders); } catch (e) {}
-    setAuthorList((p) => p.filter((u) => u._id !== id)); onReload && onReload();
+    try { await api.delete(`/admin/users/${id}?email=${encodeURIComponent(email || '')}`, authHeaders); } catch (e) {}
+    syncList(authorList.filter((u) => u._id !== id));
   };
 
   const handleCreate = async (e) => {
@@ -35,9 +42,8 @@ const AdminAuthorsTable = ({ users, onReload, authHeaders }) => {
       const res = await api.post('/admin/users', newAuthor, authHeaders);
       if (res.data?.data) created = res.data.data;
     } catch (e) {}
-    setAuthorList((p) => [...p, created]);
+    syncList([...authorList, created]);
     setShowAdd(false); setNewAuthor({ name: '', email: '', websiteUrl: '', socialMediaId: '', role: 'user' });
-    onReload && onReload();
   };
 
   return (
@@ -77,12 +83,7 @@ const AdminAuthorsTable = ({ users, onReload, authHeaders }) => {
                     <td className="text-muted">{u.email}</td>
                     <td>{u.websiteUrl ? <a href={u.websiteUrl} target="_blank" rel="noreferrer" className="text-dark text-truncate d-inline-block" style={{ maxWidth: '140px' }}>{u.websiteUrl}</a> : <span className="text-muted">&mdash;</span>}</td>
                     <td className="fw-semibold text-dark">{u.socialMediaId || <span className="text-muted">&mdash;</span>}</td>
-                    <td className="text-end pe-3 py-2">
-                      <div className="btn-group btn-group-sm">
-                        <button onClick={() => startEdit(u)} className="btn btn-outline-dark btn-sm">Edit</button>
-                        {u.role !== 'admin' && <button onClick={() => handleDelete(u._id, u.name)} className="btn btn-outline-dark btn-sm">Delete</button>}
-                      </div>
-                    </td>
+                    <td className="text-end pe-3 py-2"><div className="btn-group btn-group-sm"><button onClick={() => startEdit(u)} className="btn btn-outline-dark btn-sm">Edit</button>{u.role !== 'admin' && <button onClick={() => handleDelete(u._id, u.name, u.email)} className="btn btn-outline-dark btn-sm">Delete</button>}</div></td>
                   </>
                 )}
               </tr>
@@ -93,5 +94,4 @@ const AdminAuthorsTable = ({ users, onReload, authHeaders }) => {
     </div>
   );
 };
-
 export default AdminAuthorsTable;

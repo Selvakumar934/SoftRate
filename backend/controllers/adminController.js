@@ -21,10 +21,7 @@ exports.getAdminArticles = async (req, res) => {
   } catch (err) { res.status(500).json({ success: false, message: err.message }); }
 };
 
-exports.getPendingArticles = async (req, res) => {
-  const list = isDb() ? await Article.find({ status: 'pending' }).populate('authorId', 'name email') : mockStore.articles.filter((a) => a.status === 'pending');
-  res.json({ success: true, count: list.length, data: list });
-};
+exports.getPendingArticles = async (req, res) => res.json({ success: true, data: isDb() ? await Article.find({ status: 'pending' }).populate('authorId', 'name email') : mockStore.articles.filter((a) => a.status === 'pending') });
 
 exports.approveArticle = async (req, res) => {
   if (isDb()) {
@@ -77,8 +74,9 @@ exports.createUser = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
   const { name, email, websiteUrl, socialMediaId, role, bio } = req.body;
+  const q = mongoose.isValidObjectId(req.params.id) ? { _id: req.params.id } : { email: (email || req.params.id).toLowerCase() };
   if (isDb()) {
-    try { const u = await User.findByIdAndUpdate(req.params.id, { name, email, websiteUrl, socialMediaId, role, bio }, { returnDocument: 'after' }).select('-password'); if (u) return res.json({ success: true, data: u }); } catch (e) {}
+    try { const u = await User.findOneAndUpdate(q, { name, email, websiteUrl, socialMediaId, role, bio }, { returnDocument: 'after' }).select('-password'); if (u) return res.json({ success: true, data: u }); } catch (e) {}
   }
   const u = mockStore.users.find((user) => user._id === req.params.id || user.email === email);
   if (u) Object.assign(u, { name, email, websiteUrl, socialMediaId, role });
@@ -86,8 +84,10 @@ exports.updateUser = async (req, res) => {
 };
 
 exports.deleteUser = async (req, res) => {
-  if (isDb()) { try { await User.findByIdAndDelete(req.params.id); } catch (e) {} }
-  const idx = mockStore.users.findIndex((u) => u._id === req.params.id);
+  const { id } = req.params; const { email } = req.query;
+  const q = mongoose.isValidObjectId(id) ? { _id: id } : { email: (email || id).toLowerCase() };
+  if (isDb()) { try { await User.findOneAndDelete(q); } catch (e) {} }
+  const idx = mockStore.users.findIndex((u) => u._id === id || u.email === (email || id));
   if (idx !== -1) mockStore.users.splice(idx, 1);
   res.json({ success: true, message: 'Author deleted successfully' });
 };

@@ -13,7 +13,14 @@ const AdminPortalPage = () => {
     try { const s = localStorage.getItem('devsphere_admin_articles'); if (s) return JSON.parse(s); } catch (e) {}
     return SAMPLE_ADMIN_ARTICLES;
   });
-  const [users, setUsers] = useState(SAMPLE_AUTHORS), [reviews, setReviews] = useState(SAMPLE_REVIEWS);
+  const [users, setUsers] = useState(() => {
+    try { const s = localStorage.getItem('devsphere_admin_users'); if (s) return JSON.parse(s); } catch (e) {}
+    return SAMPLE_AUTHORS;
+  });
+  const [reviews, setReviews] = useState(() => {
+    try { const s = localStorage.getItem('devsphere_admin_reviews'); if (s) return JSON.parse(s); } catch (e) {}
+    return SAMPLE_REVIEWS;
+  });
   const navigate = useNavigate(), token = localStorage.getItem('devsphere_admin_token');
   const authHeaders = { headers: { Authorization: `Bearer ${token}` } };
 
@@ -25,9 +32,15 @@ const AdminPortalPage = () => {
         localStorage.setItem('devsphere_admin_articles', JSON.stringify(res.data.data.allArticles));
       }
       const uRes = await api.get('/admin/users', authHeaders);
-      if (uRes.data?.data?.length) setUsers(uRes.data.data);
+      if (uRes.data?.data?.length) {
+        setUsers(uRes.data.data);
+        localStorage.setItem('devsphere_admin_users', JSON.stringify(uRes.data.data));
+      }
       const rRes = await api.get('/reviews', authHeaders);
-      if (rRes.data?.data?.length) setReviews(rRes.data.data);
+      if (rRes.data?.data?.length) {
+        setReviews(rRes.data.data);
+        localStorage.setItem('devsphere_admin_reviews', JSON.stringify(rRes.data.data));
+      }
     } catch (e) {}
   };
 
@@ -57,10 +70,7 @@ const AdminPortalPage = () => {
   return (
     <div className="container py-4">
       <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 pb-2 border-bottom border-dark gap-2">
-        <div>
-          <span className="badge bg-dark text-white mb-1">Admin Portal</span>
-          <h3 className="fw-bold text-dark mb-0">Platform Administration</h3>
-        </div>
+        <div><span className="badge bg-dark text-white mb-1">Admin Portal</span><h3 className="fw-bold text-dark mb-0">Platform Administration</h3></div>
         <div className="d-flex gap-2">
           <div className="btn-group btn-group-sm">
             <button onClick={() => setTab('articles')} className={`btn ${tab === 'articles' ? 'btn-dark' : 'btn-outline-dark'}`}>Articles ({articles.length})</button>
