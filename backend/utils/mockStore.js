@@ -1,10 +1,10 @@
 // In-Memory Data Store for DevSphere Technology Blog
 const categories = [{ _id: 'cat-1', name: 'Software Development', slug: 'software-development', description: 'Practical tutorials and architecture guides.', articleCount: 18 }];
 const users = [
-  { _id: 'admin-dev-01', name: 'DevSphere Administrator', email: 'admin@devsphere.com', role: 'admin', accountStatus: 'active' },
-  { _id: 'user-1', name: 'David Miller', email: 'david@devsphere.com', role: 'user', accountStatus: 'active' },
-  { _id: 'user-2', name: 'Sarah Jenkins', email: 'sarah@devsphere.com', role: 'user', accountStatus: 'active' },
-  { _id: 'user-3', name: 'Alex Rivera', email: 'alex@devsphere.com', role: 'user', accountStatus: 'active' }
+  { _id: 'admin-dev-01', name: 'DevSphere Administrator', email: 'admin@devsphere.com', role: 'admin', accountStatus: 'active', websiteUrl: 'https://devsphere.com', socialMediaId: '@devsphere_admin' },
+  { _id: 'user-1', name: 'David Miller', email: 'david@devsphere.com', role: 'user', accountStatus: 'active', websiteUrl: 'https://github.com/davidmiller-eng', socialMediaId: '@david_miller_tech' },
+  { _id: 'user-2', name: 'Sarah Jenkins', email: 'sarah@devsphere.com', role: 'user', accountStatus: 'active', websiteUrl: 'https://sarahjenkins.io', socialMediaId: '@sarah_codes' },
+  { _id: 'user-3', name: 'Alex Rivera', email: 'alex@devsphere.com', role: 'user', accountStatus: 'active', websiteUrl: 'https://alexrivera.dev', socialMediaId: '@alexrivera_sys' }
 ];
 
 const buildContent = (title, domain, desc) => `## ${title}
@@ -49,7 +49,6 @@ const createArt = (id, title, slug, desc, domain, status, author, daysAgo, img, 
 });
 
 let articles = [
-  // 18 Published Articles (3 per domain)
   createArt('art-1', 'Architecting Scalable Microservices with Node.js', 'architecting-scalable-microservices-with-nodejs', 'Proven architectural patterns for designing resilient, decoupled services with replica sets.', 'Microservices', 'published', users[1], 2, 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80', 1420),
   createArt('art-2', 'Event-Driven Microservices Architecture with Apache Kafka', 'event-driven-microservices-architecture-with-apache-kafka', 'Designing decoupled asynchronous event streams with Kafka brokers, consumers, and idempotency.', 'Microservices', 'published', users[2], 3, 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1200&q=80', 1820),
   createArt('art-3', 'API Gateway Patterns in Distributed Microservices Ecosystems', 'api-gateway-patterns-in-distributed-microservices-ecosystems', 'Centralizing authentication, rate limiting, and request routing across distributed backend services.', 'Microservices', 'published', users[3], 4, 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80', 2150),

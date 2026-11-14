@@ -21,17 +21,15 @@ const AdminDashboardPage = () => {
   const handleAction = async (id, act) => {
     try {
       if (act === 'approve') await adminApi.put(`/admin/articles/${id}/approve`);
-      if (act === 'reject') {
-        const r = window.prompt('Rejection feedback:', 'Needs revision');
-        if (r) await adminApi.put(`/admin/articles/${id}/reject`, { rejectionReason: r });
-      }
+      if (act === 'reject') { const r = window.prompt('Rejection feedback:', 'Needs revision'); if (r) await adminApi.put(`/admin/articles/${id}/reject`, { rejectionReason: r }); }
+      if (act === 'delete' && window.confirm('Permanently delete this article?')) await adminApi.delete(`/admin/articles/${id}`);
       loadData();
     } catch (e) {}
   };
 
   const filtered = filter === 'all' ? articles : articles.filter((a) => a.status === filter);
   const cards = [
-    { label: 'Total Articles', val: metrics.totalArticles, sub: `${metrics.totalViews || 38260} Views` },
+    { label: 'Total Articles', val: metrics.totalArticles, sub: `${metrics.totalViews || 42100} Views` },
     { label: 'Published', val: metrics.publishedArticles, sub: 'Active live posts' },
     { label: 'Pending Review', val: metrics.pendingArticles, sub: 'Requires moderation', badge: true },
     { label: 'Drafts', val: metrics.draftArticles, sub: 'Work in progress' }
@@ -40,7 +38,7 @@ const AdminDashboardPage = () => {
   return (
     <div>
       <div className="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom border-dark">
-        <div><h2 className="fw-bold text-dark mb-0">Administrative Overview</h2><small className="text-muted">Platform editorial metrics, 5 pending reviews, and article catalog.</small></div>
+        <div><h2 className="fw-bold text-dark mb-0">Administrative Overview</h2><small className="text-muted">Platform editorial metrics, 9 pending reviews, and article catalog.</small></div>
         <Link to="/articles/create" className="btn btn-dark btn-sm px-4 fw-semibold">+ New Publication</Link>
       </div>
       <div className="row g-3 mb-4">
@@ -80,9 +78,12 @@ const AdminDashboardPage = () => {
                   <td className="small text-muted">{item.authorId?.name || 'Author'}</td>
                   <td><span className="badge bg-dark text-white text-uppercase" style={{ fontSize: '0.7rem' }}>{item.status}</span></td>
                   <td className="text-end pe-3 py-2">
-                    {item.status === 'pending' ? (
-                      <div className="btn-group btn-group-sm"><button onClick={() => handleAction(item._id, 'approve')} className="btn btn-dark">Approve</button><button onClick={() => handleAction(item._id, 'reject')} className="btn btn-outline-dark">Reject</button></div>
-                    ) : <Link to={`/articles/edit/${item._id}`} className="btn btn-outline-dark btn-sm">Edit</Link>}
+                    <div className="btn-group btn-group-sm">
+                      {item.status === 'pending' && <button onClick={() => handleAction(item._id, 'approve')} className="btn btn-dark">Approve</button>}
+                      {item.status === 'pending' && <button onClick={() => handleAction(item._id, 'reject')} className="btn btn-outline-dark">Reject</button>}
+                      <Link to={`/articles/edit/${item._id}`} className="btn btn-outline-dark">Edit</Link>
+                      <button onClick={() => handleAction(item._id, 'delete')} className="btn btn-outline-dark">Delete</button>
+                    </div>
                   </td>
                 </tr>
               ))}

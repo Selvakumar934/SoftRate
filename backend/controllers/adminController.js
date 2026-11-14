@@ -1,15 +1,11 @@
 const mongoose = require('mongoose');
-const Article = require('../models/Article.js');
-const mockStore = require('../utils/mockStore.js');
-
+const Article = require('../models/Article.js'), User = require('../models/User.js'), mockStore = require('../utils/mockStore.js');
 const isDb = () => mongoose.connection.readyState === 1;
 
 exports.getDashboard = async (req, res) => {
   try {
-    const all = isDb() ? await Article.find().populate('authorId', 'name email').sort({ createdAt: -1 }) : mockStore.articles;
-    const pub = all.filter((a) => a.status === 'published');
-    const pen = all.filter((a) => a.status === 'pending');
-    const dra = all.filter((a) => a.status === 'draft');
+    const all = isDb() ? await Article.find().populate('authorId', 'name email websiteUrl socialMediaId').sort({ createdAt: -1 }) : mockStore.articles;
+    const pub = all.filter((a) => a.status === 'published'), pen = all.filter((a) => a.status === 'pending'), dra = all.filter((a) => a.status === 'draft');
     res.json({
       success: true,
       data: {
@@ -23,7 +19,7 @@ exports.getDashboard = async (req, res) => {
 exports.getAdminArticles = async (req, res) => {
   try {
     const { status, search } = req.query;
-    let list = isDb() ? await Article.find(status && status !== 'all' ? { status } : {}).populate('authorId', 'name email').sort({ createdAt: -1 }) : [...mockStore.articles];
+    let list = isDb() ? await Article.find(status && status !== 'all' ? { status } : {}).populate('authorId', 'name email websiteUrl socialMediaId').sort({ createdAt: -1 }) : [...mockStore.articles];
     if (!isDb() && status && status !== 'all') list = list.filter((a) => a.status === status);
     if (search) {
       const q = search.toLowerCase();
@@ -40,10 +36,10 @@ exports.getPendingArticles = async (req, res) => {
 
 exports.approveArticle = async (req, res) => {
   if (isDb()) {
-    const a = await Article.findByIdAndUpdate(req.params.id, { status: 'published', publishedDate: new Date() }, { returnDocument: 'after' });
-    if (a) return res.json({ success: true, message: 'Article approved', data: a });
+    try { const a = await Article.findByIdAndUpdate(req.params.id, { status: 'published', publishedDate: new Date() }, { returnDocument: 'after' }); if (a) return res.json({ success: true, message: 'Article approved', data: a }); } catch (e) {}
+    const a2 = await Article.findOneAndUpdate({ slug: req.params.id }, { status: 'published', publishedDate: new Date() }, { returnDocument: 'after' }); if (a2) return res.json({ success: true, message: 'Article approved', data: a2 });
   }
-  const art = mockStore.articles.find((a) => a._id === req.params.id);
+  const art = mockStore.articles.find((a) => a._id === req.params.id || a.slug === req.params.id);
   if (art) { art.status = 'published'; art.publishedDate = new Date(); }
   res.json({ success: true, message: 'Article approved', data: art });
 };
@@ -51,25 +47,51 @@ exports.approveArticle = async (req, res) => {
 exports.rejectArticle = async (req, res) => {
   const r = req.body.rejectionReason || 'Requires revision';
   if (isDb()) {
-    const a = await Article.findByIdAndUpdate(req.params.id, { status: 'rejected', rejectionReason: r }, { returnDocument: 'after' });
-    if (a) return res.json({ success: true, message: 'Article rejected', data: a });
+    try { const a = await Article.findByIdAndUpdate(req.params.id, { status: 'rejected', rejectionReason: r }, { returnDocument: 'after' }); if (a) return res.json({ success: true, message: 'Article rejected', data: a }); } catch (e) {}
+    const a2 = await Article.findOneAndUpdate({ slug: req.params.id }, { status: 'rejected', rejectionReason: r }, { returnDocument: 'after' }); if (a2) return res.json({ success: true, message: 'Article rejected', data: a2 });
   }
-  const art = mockStore.articles.find((a) => a._id === req.params.id);
+  const art = mockStore.articles.find((a) => a._id === req.params.id || a.slug === req.params.id);
   if (art) { art.status = 'rejected'; art.rejectionReason = r; }
   res.json({ success: true, message: 'Article rejected', data: art });
 };
 
+exports.deleteArticleAdmin = async (req, res) => {
+  if (isDb()) {
+    try { await Article.findByIdAndDelete(req.params.id); } catch (e) {}
+    try { await Article.findOneAndDelete({ slug: req.params.id }); } catch (e) {}
+  }
+  const idx = mockStore.articles.findIndex((a) => a._id === req.params.id || a.slug === req.params.id);
+  if (idx !== -1) mockStore.articles.splice(idx, 1);
+  res.json({ success: true, message: 'Article deleted permanently' });
+};
+
 exports.toggleFeaturedStatus = async (req, res) => {
   if (isDb()) {
-    const doc = await Article.findById(req.params.id);
-    if (doc) { doc.featuredStatus = !doc.featuredStatus; await doc.save(); return res.json({ success: true, featuredStatus: doc.featuredStatus }); }
+    try { const doc = await Article.findById(req.params.id); if (doc) { doc.featuredStatus = !doc.featuredStatus; await doc.save(); return res.json({ success: true, featuredStatus: doc.featuredStatus }); } } catch (e) {}
   }
   const art = mockStore.articles.find((a) => a._id === req.params.id);
   if (art) art.featuredStatus = !art.featuredStatus;
   res.json({ success: true, featuredStatus: art?.featuredStatus });
 };
 
-exports.getUsers = async (req, res) => res.json({ success: true, data: mockStore.users });
+exports.getUsers = async (req, res) => {
+  if (isDb()) return res.json({ success: true, data: await User.find().select('-password').sort({ createdAt: 1 }) });
+  res.json({ success: true, data: mockStore.users });
+};
+
+exports.updateUser = async (req, res) => {
+  const { name, email, websiteUrl, socialMediaId, role, bio } = req.body;
+  if (isDb()) {
+    try {
+      const u = await User.findByIdAndUpdate(req.params.id, { name, email, websiteUrl, socialMediaId, role, bio }, { returnDocument: 'after' }).select('-password');
+      if (u) return res.json({ success: true, data: u });
+    } catch (e) {}
+  }
+  const u = mockStore.users.find((user) => user._id === req.params.id || user.email === email);
+  if (u) Object.assign(u, { name, email, websiteUrl, socialMediaId, role });
+  res.json({ success: true, data: u });
+};
+
 exports.toggleUserStatus = async (req, res) => res.json({ success: true });
 exports.toggleUserRole = async (req, res) => res.json({ success: true });
 exports.getActivities = async (req, res) => res.json({ success: true, data: mockStore.activities || [] });
