@@ -36,25 +36,25 @@ const ArticleReviewsBlock = ({ article }) => {
   const avg = reviews.length ? (reviews.reduce((a, b) => a + Number(b.rating), 0) / reviews.length).toFixed(1) : '5.0';
 
   return (
-    <div className="my-5 pt-4 border-top border-light-subtle">
-      <div className="d-flex justify-content-between align-items-center mb-3">
+    <div className="my-4 pt-3 border-top border-light-subtle">
+      <div className="d-flex flex-wrap justify-content-between align-items-center mb-3">
         <div>
-          <h5 className="fw-bold text-dark mb-0">Reader Reviews & Queries ({reviews.length})</h5>
-          <small className="text-muted">Average Rating: <strong className="text-dark">{avg} / 5</strong> {'★'.repeat(Math.round(Number(avg)))}</small>
+          <h5 className="fw-bold text-dark mb-0">Overall Rating: {avg} / 5</h5>
+          <small className="text-muted">{'★'.repeat(Math.round(Number(avg)))}{'☆'.repeat(5 - Math.round(Number(avg)))} &bull; Based on {reviews.length} user ratings</small>
         </div>
-        <span className="badge bg-dark text-white">{reviews.length} Ratings</span>
+        <span className="badge bg-dark text-white px-3 py-2">{reviews.length} Ratings</span>
       </div>
 
-      <div className="card border-dark rounded-2 p-3 bg-white mb-4">
-        <h6 className="fw-bold text-dark mb-2">Write a Review or Query</h6>
-        {submitted && <div className="alert alert-dark py-1 px-2 small mb-2">Thank you! Your review has been saved to Admin.</div>}
+      <div className="review-form-card mb-3">
+        <h6 className="fw-bold text-dark mb-2">Rate this Article & Submit Query</h6>
+        {submitted && <div className="alert alert-dark py-1 px-2 small mb-2">Thank you! Your rating and query have been recorded.</div>}
         <form onSubmit={handleSubmit}>
           <div className="row g-2 mb-2">
             <div className="col-md-7">
-              <input className="form-control form-control-sm border-dark" placeholder="Your Name or Handle" value={name} onChange={(e) => setName(e.target.value)} required />
+              <input className="form-control form-control-sm border-secondary border-opacity-25" placeholder="Your Name or Handle" value={name} onChange={(e) => setName(e.target.value)} required />
             </div>
             <div className="col-md-5">
-              <select className="form-select form-select-sm border-dark" value={rating} onChange={(e) => setRating(e.target.value)}>
+              <select className="form-select form-select-sm border-secondary border-opacity-25" value={rating} onChange={(e) => setRating(e.target.value)}>
                 <option value={5}>★★★★★ (5 - Excellent)</option>
                 <option value={4}>★★★★☆ (4 - Good)</option>
                 <option value={3}>★★★☆☆ (3 - Average)</option>
@@ -64,25 +64,12 @@ const ArticleReviewsBlock = ({ article }) => {
             </div>
           </div>
           <div className="mb-2">
-            <textarea className="form-control form-control-sm border-dark" rows={2} placeholder="Share your technical feedback, questions, or queries about this article..." value={comment} onChange={(e) => setComment(e.target.value)} required />
+            <textarea className="form-control form-control-sm border-secondary border-opacity-25" rows={2} placeholder="Share your technical feedback, questions, or queries about this article..." value={comment} onChange={(e) => setComment(e.target.value)} required />
           </div>
           <button type="submit" disabled={submitting} className="btn btn-dark btn-sm px-3 fw-semibold">
-            {submitting ? 'Submitting...' : 'Submit Review'}
+            {submitting ? 'Submitting...' : 'Submit Rating'}
           </button>
         </form>
-      </div>
-
-      <div className="d-flex flex-column gap-2">
-        {reviews.map((r, i) => (
-          <div key={r._id || i} className="p-3 border border-light-subtle rounded-2 bg-light">
-            <div className="d-flex justify-content-between align-items-center mb-1">
-              <span className="fw-bold text-dark small">{r.userName}</span>
-              <span className="text-dark small fw-bold">{'★'.repeat(r.rating || 5)}{'☆'.repeat(5 - (r.rating || 5))} ({r.rating}/5)</span>
-            </div>
-            <p className="text-dark small mb-1">{r.comment}</p>
-            <small className="text-muted" style={{ fontSize: '0.72rem' }}>{new Date(r.createdAt).toLocaleDateString()}</small>
-          </div>
-        ))}
       </div>
     </div>
   );
