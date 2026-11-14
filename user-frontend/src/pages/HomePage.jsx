@@ -7,8 +7,8 @@ import TechStacksBlock from '../components/blog/TechStacksBlock.jsx';
 import NewsletterBlock from '../components/blog/NewsletterBlock.jsx';
 
 const HomePage = () => {
-  const [articles, setArticles] = useState([]);
-  const [featured, setFeatured] = useState(null);
+  const [articles, setArticles] = useState(SAMPLE_ARTICLES);
+  const [featured, setFeatured] = useState(SAMPLE_ARTICLES[0]);
   const [search, setSearch] = useState('');
   const navigate = useNavigate();
 

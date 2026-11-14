@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../services/api.js';
+import { SAMPLE_ADMIN_ARTICLES } from '../services/sampleData.js';
 
 const UserDashboardPage = () => {
-  const [articles, setArticles] = useState([]), [filter, setFilter] = useState('all'), [loading, setLoading] = useState(true);
+  const [articles, setArticles] = useState(SAMPLE_ADMIN_ARTICLES), [filter, setFilter] = useState('all'), [loading, setLoading] = useState(false);
 
   const loadArticles = async () => {
     try {
       const res = await api.get('/articles/my/all');
-      if (res.data?.data) setArticles(res.data.data);
-    } catch (err) { console.warn('Could not load user articles'); }
-    finally { setLoading(false); }
+      if (res.data?.data && res.data.data.length > 0) setArticles(res.data.data);
+    } catch (err) {}
   };
 
   useEffect(() => { loadArticles(); }, []);

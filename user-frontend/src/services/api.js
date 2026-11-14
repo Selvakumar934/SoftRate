@@ -12,8 +12,8 @@ const api = axios.create({
 // Interceptor to inject JWT token
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('devsphere_user_token');
-    if (token) {
+    const token = localStorage.getItem('devsphere_admin_token') || localStorage.getItem('devsphere_user_token');
+    if (token && !config.headers.Authorization) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;

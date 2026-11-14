@@ -4,33 +4,30 @@ import api from '../services/api.js';
 import { SAMPLE_ARTICLES } from '../services/sampleData.js';
 import ArticleCard from '../components/blog/ArticleCard.jsx';
 
+const filterSample = (q) => {
+  if (!q) return SAMPLE_ARTICLES;
+  const lq = q.toLowerCase();
+  return SAMPLE_ARTICLES.filter((a) => a.domain?.toLowerCase().includes(lq) || a.title?.toLowerCase().includes(lq) || a.shortDescription?.toLowerCase().includes(lq));
+};
+
 const BlogListingPage = () => {
   const [params, setParams] = useSearchParams();
-  const [articles, setArticles] = useState([]);
-  const [search, setSearch] = useState(params.get('search') || '');
-  const [loading, setLoading] = useState(true);
+  const query = params.get('search') || '';
+  const [articles, setArticles] = useState(() => filterSample(query));
+  const [search, setSearch] = useState(query);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchArticles = async () => {
-      setLoading(true);
-      const query = params.get('search') || '';
+      const q = params.get('search') || '';
       try {
-        const res = await api.get(`/articles?search=${encodeURIComponent(query)}`);
-        if (res.data?.data) {
+        const res = await api.get(`/articles?search=${encodeURIComponent(q)}`);
+        if (res.data?.data && res.data.data.length > 0) {
           setArticles(res.data.data);
-          setLoading(false);
           return;
         }
-      } catch (err) {
-        // fallback to samples
-      }
-      let list = SAMPLE_ARTICLES;
-      if (query) {
-        const q = query.toLowerCase();
-        list = list.filter((a) => a.domain?.toLowerCase().includes(q) || a.title.toLowerCase().includes(q) || a.shortDescription.toLowerCase().includes(q));
-      }
-      setArticles(list);
-      setLoading(false);
+      } catch (err) {}
+      setArticles(filterSample(q));
     };
     fetchArticles();
   }, [params]);

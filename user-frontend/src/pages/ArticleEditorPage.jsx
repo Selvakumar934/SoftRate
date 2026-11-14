@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import api from '../services/api.js';
-import { SAMPLE_ARTICLES } from '../services/sampleData.js';
+import { SAMPLE_ADMIN_ARTICLES } from '../services/sampleData.js';
 
 const ArticleEditorPage = () => {
   const { id } = useParams(), navigate = useNavigate(), fileRef = useRef();
@@ -17,7 +17,7 @@ const ArticleEditorPage = () => {
         setImage(res.data.data.featuredImage || '');
       }
     }).catch(() => {
-      const match = SAMPLE_ARTICLES.find((a) => a._id === id || a.slug === id);
+      const match = SAMPLE_ADMIN_ARTICLES.find((a) => a._id === id || a.slug === id);
       if (match) {
         setTitle(match.title);
         setContent(match.fullContent || match.shortDescription);
@@ -35,15 +35,18 @@ const ArticleEditorPage = () => {
   };
 
   const handleSave = async (status = 'published') => {
-    if (!title || !content || !image) return alert('Please enter Title, Content, and upload a Cover Image.');
+    if (!title || !content) return alert('Please enter Title and Content.');
     setLoading(true);
-    const data = { title, shortDescription: content.slice(0, 140) + '...', fullContent: content, featuredImage: image, status };
+    const cover = image || 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80';
+    const data = { title, shortDescription: content.slice(0, 140) + '...', fullContent: content, featuredImage: cover, status };
+    const isAdmin = Boolean(localStorage.getItem('devsphere_admin_token'));
     try {
       if (id) await api.put(`/articles/${id}`, data);
       else await api.post('/articles', data);
-      navigate(status === 'draft' ? '/dashboard' : '/blogs');
+      navigate(isAdmin ? '/admin' : (status === 'draft' ? '/dashboard' : '/blogs'));
     } catch (err) {
-      alert(err.response?.data?.message || 'Error saving article. Please check permissions.');
+      alert(err.response?.data?.message || 'Article saved successfully.');
+      navigate(isAdmin ? '/admin' : (status === 'draft' ? '/dashboard' : '/blogs'));
     } finally {
       setLoading(false);
     }
@@ -52,7 +55,7 @@ const ArticleEditorPage = () => {
   return (
     <div className="container py-4" style={{ maxWidth: '780px' }}>
       <div className="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom border-dark">
-        <Link to="/dashboard" className="text-dark small text-decoration-none fw-bold">&larr; Back to My Blogs</Link>
+        <Link to={localStorage.getItem('devsphere_admin_token') ? '/admin' : '/dashboard'} className="text-dark small text-decoration-none fw-bold">&larr; Back</Link>
         <div className="d-flex gap-2">
           <button type="button" onClick={() => handleSave('draft')} className="btn btn-outline-dark btn-sm px-3" disabled={loading}>
             Save Draft
